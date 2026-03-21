@@ -6,15 +6,20 @@ export type ChatRoom = {
   lastMessage: string;
   updatedAt: string;
   unreadCount: number;
+  creatorId?: string;
+  participantIds?: string[];
   isOnline?: boolean;
   isGroup?: boolean;
 };
 
 export type ChatMessage = {
   id: number;
+  roomId?: number;
   senderId: string;
   senderName: string;
   message: string;
+  fileUrl?: string;
+  messageType?: "TEXT" | "IMAGE" | "FILE";
   translatedMessage?: string;
   createdAt: string;
   mine: boolean;
@@ -41,4 +46,3 @@ export type SendMessagePayload = {
   message: string;
   targetLanguage?: LanguageCode;
 };
-

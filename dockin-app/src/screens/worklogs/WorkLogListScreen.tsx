@@ -8,6 +8,7 @@ import { WorkLogCard } from "@/src/components/worklog/WorkLogCard";
 import { useAsyncData } from "@/src/hooks/useAsyncData";
 import { workLogService } from "@/src/services/workLogService";
 import { theme } from "@/src/theme/theme";
+import type { WorkLog } from "@/src/types";
 
 export function WorkLogListScreen({ navigation }: any) {
   const loadLogs = useCallback(() => workLogService.getWorkLogs(), []);
@@ -30,7 +31,7 @@ export function WorkLogListScreen({ navigation }: any) {
       {error ? <Text style={styles.error}>{error}</Text> : null}
       {loading ? <LoadingState /> : null}
       {!loading && !data?.length ? <EmptyState title="등록된 작업일지가 없습니다." /> : null}
-      {data?.map((item) => (
+      {data?.map((item: WorkLog) => (
         <WorkLogCard
           key={item.logId}
           item={item}
@@ -69,4 +70,3 @@ const styles = StyleSheet.create({
     color: theme.colors.danger,
   },
 });
-

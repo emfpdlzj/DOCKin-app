@@ -11,11 +11,16 @@ export type AttendanceSummary = {
 };
 
 export type TodayAttendance = {
+  id?: number;
+  userId?: string;
   date: string;
   checkInTime?: string;
   checkOutTime?: string;
+  totalWorkTime?: string;
+  inLocation?: string;
+  outLocation?: string;
+  status?: string;
   leaveDays: number;
   absentDays: number;
   state: AttendanceState;
 };
-

@@ -12,7 +12,7 @@ import { workLogService } from "@/src/services/workLogService";
 import { theme } from "@/src/theme/theme";
 import { createTraceId } from "@/src/utils/trace";
 import type { RootStackParamList } from "@/src/navigation/types";
-import type { LanguageCode } from "@/src/types";
+import type { LanguageCode, WorkLog } from "@/src/types";
 
 type Props = NativeStackScreenProps<RootStackParamList, "WorkLogTranslation">;
 
@@ -20,7 +20,7 @@ export function WorkLogTranslationScreen({ route }: Props) {
   const loadLogs = useCallback(() => workLogService.getWorkLogs(), []);
   const { data, loading, error } = useAsyncData(loadLogs);
   const selected = useMemo(
-    () => data?.find((item) => item.logId === route.params?.logId) ?? data?.[0],
+    () => data?.find((item: WorkLog) => item.logId === route.params?.logId) ?? data?.[0],
     [data, route.params?.logId],
   );
   const [target, setTarget] = useState<LanguageCode>("ko");
@@ -98,4 +98,3 @@ const styles = StyleSheet.create({
     color: theme.colors.text,
   },
 });
-

@@ -9,6 +9,7 @@ import { StatusBadge } from "@/src/components/common/StatusBadge";
 import { useAsyncData } from "@/src/hooks/useAsyncData";
 import { safetyService } from "@/src/services/safetyService";
 import { theme } from "@/src/theme/theme";
+import type { SafetyEducation } from "@/src/types";
 
 export function SafetyEducationScreen() {
   const loadEducations = useCallback(() => safetyService.getEducationList(), []);
@@ -19,12 +20,12 @@ export function SafetyEducationScreen() {
       <Text style={styles.title}>안전 교육이수</Text>
       <AppCard style={styles.hero}>
         <Text style={styles.heroText}>이수 현황</Text>
-        <Text style={styles.heroCount}>{data?.filter((item) => item.completed).length ?? 0} / {data?.length ?? 0}</Text>
+        <Text style={styles.heroCount}>{data?.filter((item: SafetyEducation) => item.completed).length ?? 0} / {data?.length ?? 0}</Text>
       </AppCard>
       {error ? <Text style={styles.error}>{error}</Text> : null}
       {loading ? <LoadingState /> : null}
       {!loading && !data?.length ? <EmptyState title="교육 목록이 없습니다." /> : null}
-      {data?.map((item) => (
+      {data?.map((item: SafetyEducation) => (
         <AppCard key={item.id}>
           <View style={styles.row}>
             <View style={{ flex: 1 }}>
@@ -50,4 +51,3 @@ const styles = StyleSheet.create({
   meta: { color: theme.colors.subText, marginTop: 4 },
   error: { color: theme.colors.danger },
 });
-

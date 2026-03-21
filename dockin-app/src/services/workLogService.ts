@@ -2,40 +2,86 @@ import { springApi } from "@/src/api/http";
 import type { PaginationParams, WorkLog, WorkLogPayload } from "@/src/types";
 import { requestFirstSuccess } from "./requestFallback";
 
+function toWorkLog(dto: any): WorkLog {
+  return {
+    logId: dto.logId,
+    userId: dto.userId,
+    equipmentId: dto.equipmentId ?? 0,
+    title: dto.title ?? "",
+    logText: dto.logText ?? "",
+    imageUrls: dto.imageUrls ?? [],
+    imageUrl: dto.imageUrls?.[0],
+    audioFileUrl: dto.audioFileUrl,
+    createdAt: dto.createdAt ?? new Date().toISOString(),
+    updatedAt: dto.updatedAt ?? dto.createdAt ?? new Date().toISOString(),
+  };
+}
+
+function toPageableParams(params?: PaginationParams) {
+  return {
+    page: params?.page ?? 0,
+    size: params?.size ?? 20,
+    ...(params?.keyword ? { keyword: params.keyword } : {}),
+  };
+}
+
 export const workLogService = {
   async getWorkLogs(params?: PaginationParams) {
-    return requestFirstSuccess<WorkLog[] | { items: WorkLog[] }>(springApi, [
-      { url: "/api/work-logs", method: "GET", params },
-      { url: "/api/worklogs", method: "GET", params },
-    ]).then((data) => ("items" in data ? data.items : data));
+    const response = await springApi.get("/api/work-logs", {
+      params: toPageableParams(params),
+    });
+    return (response.data.content ?? []).map(toWorkLog);
   },
 
   async getWorkLogDetail(logId: number) {
-    return requestFirstSuccess<WorkLog>(springApi, [
-      { url: `/api/work-logs/${logId}`, method: "GET" },
-      { url: `/api/worklogs/${logId}`, method: "GET" },
-    ]);
+    const response = await springApi.get("/api/work-logs", {
+      params: { page: 0, size: 100 },
+    });
+    const found = (response.data.content ?? []).find((item: any) => item.logId === logId);
+    if (!found) {
+      throw new Error("존재하지 않는 작업일지입니다.");
+    }
+    return toWorkLog(found);
   },
 
   async createWorkLog(payload: WorkLogPayload) {
-    return requestFirstSuccess<WorkLog>(springApi, [
-      { url: "/api/work-logs", method: "POST", data: payload },
-      { url: "/api/worklogs", method: "POST", data: payload },
-    ]);
+    const form = new FormData();
+    form.append(
+      "requestDto",
+      JSON.stringify({
+        title: payload.title,
+        logText: payload.logText,
+        imageUrls: payload.imageUrls ?? (payload.imageUrl ? [payload.imageUrl] : []),
+        equipmentId: payload.equipmentId,
+        audioFileUrl: payload.audioFileUrl ?? "",
+      }),
+    );
+    const response = await springApi.post("/api/work-logs", form, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return toWorkLog(response.data);
   },
 
   async updateWorkLog(logId: number, payload: WorkLogPayload) {
-    return requestFirstSuccess<WorkLog>(springApi, [
-      { url: `/api/work-logs/${logId}`, method: "PUT", data: payload },
-      { url: `/api/worklogs/${logId}`, method: "PUT", data: payload },
-    ]);
+    const form = new FormData();
+    form.append(
+      "requestDto",
+      JSON.stringify({
+        title: payload.title,
+        logText: payload.logText,
+        imageUrls: payload.imageUrls ?? (payload.imageUrl ? [payload.imageUrl] : []),
+        equipmentId: payload.equipmentId,
+        audioFileUrl: payload.audioFileUrl ?? "",
+      }),
+    );
+    const response = await springApi.put(`/api/work-logs/${logId}`, form, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return toWorkLog(response.data);
   },
 
   async deleteWorkLog(logId: number) {
-    await requestFirstSuccess(springApi, [
-      { url: `/api/work-logs/${logId}`, method: "DELETE" },
-      { url: `/api/worklogs/${logId}`, method: "DELETE" },
-    ]);
+    await springApi.delete(`/api/work-logs/${logId}`);
   },
 
   async createSttWorkLog(payload: {
@@ -53,7 +99,7 @@ export const workLogService = {
       name: "worklog-audio.wav",
     } as never);
     form.append(
-      "text",
+      "request",
       JSON.stringify({
         title: payload.title,
         logText: payload.logText,
@@ -71,12 +117,6 @@ export const workLogService = {
         data: form,
         headers: { "Content-Type": "multipart/form-data" },
       },
-      {
-        url: "/api/worklogs/stt",
-        method: "POST",
-        data: form,
-        headers: { "Content-Type": "multipart/form-data" },
-      },
-    ]);
+    ]).then(toWorkLog);
   },
 };

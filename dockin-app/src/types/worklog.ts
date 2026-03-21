@@ -6,6 +6,7 @@ export type WorkLog = {
   equipmentId: number;
   title: string;
   logText: string;
+  imageUrls?: string[];
   imageUrl?: string;
   audioFileUrl?: string;
   authorName?: string;
@@ -20,6 +21,7 @@ export type WorkLogPayload = {
   title: string;
   logText: string;
   equipmentId: number;
+  imageUrls?: string[];
   imageUrl?: string;
   audioFileUrl?: string;
 };
@@ -50,4 +52,3 @@ export type RealtimeTranslateResponse = {
   detectedLanguage?: LanguageCode;
   traceId: string;
 };
-

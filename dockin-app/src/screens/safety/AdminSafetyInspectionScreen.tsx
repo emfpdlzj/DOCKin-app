@@ -8,6 +8,7 @@ import { StatusBadge } from "@/src/components/common/StatusBadge";
 import { useAsyncData } from "@/src/hooks/useAsyncData";
 import { safetyService } from "@/src/services/safetyService";
 import { theme } from "@/src/theme/theme";
+import type { SafetyWorkerProgress } from "@/src/types";
 
 export function AdminSafetyInspectionScreen() {
   const loadSummary = useCallback(() => safetyService.getInspectionSummary("2025-11"), []);
@@ -29,7 +30,7 @@ export function AdminSafetyInspectionScreen() {
           </View>
           <AppCard>
             <Text style={styles.section}>근로자 이수현황</Text>
-            {workers.data?.map((item) => (
+            {workers.data?.map((item: SafetyWorkerProgress) => (
               <View key={item.workerId} style={styles.workerRow}>
                 <View>
                   <Text style={styles.workerName}>{item.workerName}</Text>
@@ -57,4 +58,3 @@ const styles = StyleSheet.create({
   workerName: { fontSize: 17, fontWeight: "700", color: theme.colors.text },
   workerTeam: { color: theme.colors.subText, marginTop: 2 },
 });
-

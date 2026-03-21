@@ -1,35 +1,83 @@
 import { springApi } from "@/src/api/http";
-import type {
-  SafetyEducation,
-  SafetyInspectionGroup,
-  SafetyInspectionSummary,
-  SafetyWorkerProgress,
-} from "@/src/types";
-import { requestFirstSuccess } from "./requestFallback";
+import type { SafetyEducation, SafetyInspectionGroup, SafetyInspectionSummary, SafetyWorkerProgress } from "@/src/types";
+
+type SafetyCourseDto = {
+  courseId: number;
+  userId?: string;
+  title?: string;
+  description?: string;
+  videoUrl?: string;
+  materialUrl?: string;
+  durationMinutes?: number;
+  status?: string;
+};
+
+function pageableParams(page = 0, size = 20, keyword?: string) {
+  return { page, size, ...(keyword ? { keyword } : {}) };
+}
 
 export const safetyService = {
   async getInspectionSummary(month: string) {
-    return requestFirstSuccess<SafetyInspectionSummary>(springApi, [
-      { url: "/api/safety/inspections/summary", method: "GET", params: { month } },
+    const [adminRes, userRes] = await Promise.all([
+      springApi.get("/api/safety/admin/courses", { params: pageableParams(0, 20) }),
+      springApi.get("/api/safety/user/training/uncompleted"),
     ]);
+    const totalWorkers = adminRes.data.totalElements ?? adminRes.data.content?.length ?? 0;
+    const incomplete = ((userRes.data ?? []) as SafetyCourseDto[]).length;
+    return {
+      totalWorkers,
+      completedWorkers: Math.max(totalWorkers - incomplete, 0),
+      incompleteWorkers: incomplete,
+      unsignedWorkers: incomplete,
+    } satisfies SafetyInspectionSummary;
   },
 
   async getWorkerProgress(month: string) {
-    return requestFirstSuccess<SafetyWorkerProgress[] | { items: SafetyWorkerProgress[] }>(springApi, [
-      { url: "/api/safety/inspections/workers", method: "GET", params: { month } },
-    ]).then((data) => ("items" in data ? data.items : data));
+    const response = await springApi.get("/api/safety/user/training/uncompleted");
+    return ((response.data ?? []) as SafetyCourseDto[]).map((item, index) => ({
+      workerId: item.courseId ?? index + 1,
+      workerName: item.title ?? "교육 미이수",
+      teamName: item.status ?? "UNWATCHED",
+      completedCount: item.status === "WATCHED" ? 1 : 0,
+      totalCount: 1,
+      completed: item.status === "WATCHED",
+    })) satisfies SafetyWorkerProgress[];
   },
 
   async getEducationList() {
-    return requestFirstSuccess<SafetyEducation[] | { items: SafetyEducation[] }>(springApi, [
-      { url: "/api/safety/educations", method: "GET" },
-    ]).then((data) => ("items" in data ? data.items : data));
+    const [allRes, uncompletedRes] = await Promise.all([
+      springApi.get("/api/safety/user/courses", { params: pageableParams(0, 20) }),
+      springApi.get("/api/safety/user/training/uncompleted"),
+    ]);
+    const uncompletedIds = new Set(((uncompletedRes.data ?? []) as SafetyCourseDto[]).map((item) => item.courseId));
+    return ((allRes.data.content ?? []) as SafetyCourseDto[]).map((item) => ({
+      id: item.courseId,
+      userId: item.userId,
+      title: item.title ?? "안전 교육",
+      description: item.description,
+      videoUrl: item.videoUrl,
+      materialUrl: item.materialUrl,
+      durationMinutes: item.durationMinutes ?? 0,
+      deadline: "-",
+      progressRate: uncompletedIds.has(item.courseId) ? 0 : 100,
+      completed: !uncompletedIds.has(item.courseId),
+    })) satisfies SafetyEducation[];
   },
 
   async getDailyInspectionGroups() {
-    return requestFirstSuccess<SafetyInspectionGroup[] | { items: SafetyInspectionGroup[] }>(springApi, [
-      { url: "/api/safety/checklists/daily", method: "GET" },
-    ]).then((data) => ("items" in data ? data.items : data));
+    const educations = await this.getEducationList();
+    return [
+      {
+        id: 1,
+        title: "안전교육 이수",
+        completedCount: educations.filter((item) => item.completed).length,
+        totalCount: educations.length,
+        items: educations.map((item) => ({
+          id: item.id,
+          label: item.title,
+          status: item.completed ? "DONE" : "TODO",
+        })),
+      },
+    ] as SafetyInspectionGroup[];
   },
 };
-

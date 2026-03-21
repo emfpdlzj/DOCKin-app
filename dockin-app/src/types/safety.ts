@@ -18,7 +18,11 @@ export type SafetyWorkerProgress = {
 
 export type SafetyEducation = {
   id: number;
+  userId?: string;
   title: string;
+  description?: string;
+  videoUrl?: string;
+  materialUrl?: string;
   durationMinutes: number;
   deadline: string;
   progressRate: number;
@@ -32,4 +36,3 @@ export type SafetyInspectionGroup = {
   totalCount: number;
   items: ChecklistItem[];
 };
-

@@ -9,6 +9,7 @@ import { StatusBadge } from "@/src/components/common/StatusBadge";
 import { useAsyncData } from "@/src/hooks/useAsyncData";
 import { chatService } from "@/src/services/chatService";
 import { theme } from "@/src/theme/theme";
+import type { ChatRoom } from "@/src/types";
 
 export function ChatRoomListScreen({ navigation }: any) {
   const loadRooms = useCallback(() => chatService.getRooms(), []);
@@ -29,7 +30,7 @@ export function ChatRoomListScreen({ navigation }: any) {
       {error ? <Text style={styles.error}>{error}</Text> : null}
       {loading ? <LoadingState /> : null}
       {!loading && !data?.length ? <EmptyState title="채팅방이 없습니다." /> : null}
-      {data?.map((room) => (
+      {data?.map((room: ChatRoom) => (
         <Pressable key={room.roomId} onPress={() => navigation.getParent()?.navigate("ChatRoom", { roomId: room.roomId, title: room.title })}>
           <AppCard style={styles.roomCard}>
             <View style={styles.roomHeader}>
@@ -61,4 +62,3 @@ const styles = StyleSheet.create({
   chatbot: { fontSize: 18, fontWeight: "800", color: theme.colors.primary, textAlign: "center" },
   error: { color: theme.colors.danger },
 });
-

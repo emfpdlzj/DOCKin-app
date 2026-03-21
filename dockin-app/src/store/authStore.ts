@@ -16,7 +16,7 @@ type AuthStore = {
   logout: () => Promise<void>;
 };
 
-export const useAuthStore = create<AuthStore>((set) => ({
+export const useAuthStore = create<AuthStore>((set, get) => ({
   hydrated: false,
   isAuthenticated: false,
   role: null,
@@ -57,8 +57,15 @@ export const useAuthStore = create<AuthStore>((set) => ({
     await authService.signup(payload);
   },
   logout: async () => {
+    const accessToken = get().accessToken;
+    const session = await loadAuthSession();
     try {
-      await authService.logout();
+      if (accessToken) {
+        await authService.logout({
+          accessToken,
+          refreshToken: session.tokens?.refreshToken,
+        });
+      }
     } finally {
       await clearAuthSession();
       set({
@@ -71,4 +78,3 @@ export const useAuthStore = create<AuthStore>((set) => ({
     }
   },
 }));
-
