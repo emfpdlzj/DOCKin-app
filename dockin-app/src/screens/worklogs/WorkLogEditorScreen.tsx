@@ -1,0 +1,204 @@
+import React, { useEffect, useState } from "react";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import * as DocumentPicker from "expo-document-picker";
+import * as ImagePicker from "expo-image-picker";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { Screen } from "@/src/components/common/Screen";
+import { AppCard } from "@/src/components/common/AppCard";
+import { AppInput } from "@/src/components/common/AppInput";
+import { AppButton } from "@/src/components/common/AppButton";
+import { workLogService } from "@/src/services/workLogService";
+import { toErrorMessage } from "@/src/utils/error";
+import { sanitizeTextInput, validateSelectedFile } from "@/src/utils/security";
+import { theme } from "@/src/theme/theme";
+import { useAuthStore } from "@/src/store/authStore";
+import type { RootStackParamList } from "@/src/navigation/types";
+
+type Props = NativeStackScreenProps<RootStackParamList, "WorkLogEditor">;
+
+export function WorkLogEditorScreen({ navigation, route }: Props) {
+  const userName = useAuthStore((state) => state.userName);
+  const [mode, setMode] = useState<"text" | "stt">("text");
+  const [title, setTitle] = useState("");
+  const [logText, setLogText] = useState("");
+  const [equipmentId, setEquipmentId] = useState("2");
+  const [audioUri, setAudioUri] = useState<string | undefined>();
+  const [imageUri, setImageUri] = useState<string | undefined>();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (route.params.mode === "edit" && route.params.logId) {
+      workLogService.getWorkLogDetail(route.params.logId).then((data) => {
+        setTitle(data.title);
+        setLogText(data.logText);
+        setEquipmentId(String(data.equipmentId));
+        setImageUri(data.imageUrl);
+        setAudioUri(data.audioFileUrl);
+      });
+    }
+  }, [route.params.logId, route.params.mode]);
+
+  const pickAudio = async () => {
+    const result = await DocumentPicker.getDocumentAsync({ type: ["audio/*"] });
+    if (!result.canceled) {
+      validateSelectedFile({
+        uri: result.assets[0].uri,
+        mimeType: result.assets[0].mimeType,
+        size: result.assets[0].size,
+        kind: "audio",
+      });
+      setAudioUri(result.assets[0].uri);
+    }
+  };
+
+  const pickImage = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) return;
+    const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ["images"], quality: 0.8 });
+    if (!result.canceled) {
+      validateSelectedFile({
+        uri: result.assets[0].uri,
+        mimeType: result.assets[0].mimeType,
+        size: result.assets[0].fileSize,
+        kind: "image",
+      });
+      setImageUri(result.assets[0].uri);
+    }
+  };
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const safeTitle = sanitizeTextInput(title, 120);
+      const safeLogText = sanitizeTextInput(logText, 4000);
+      const safeEquipmentId = Number.parseInt(equipmentId, 10);
+      if (!safeTitle || !safeLogText || !Number.isFinite(safeEquipmentId) || safeEquipmentId <= 0) {
+        throw new Error("제목, 작업 내용, 설비 ID를 올바르게 입력해주세요.");
+      }
+
+      if (mode === "stt" && audioUri) {
+        await workLogService.createSttWorkLog({
+          audioUri,
+          title: safeTitle,
+          logText: safeLogText,
+          equipmentId: safeEquipmentId,
+          imageUrl: imageUri,
+          audioFileUrl: audioUri,
+        });
+      } else if (route.params.mode === "edit" && route.params.logId) {
+        await workLogService.updateWorkLog(route.params.logId, {
+          title: safeTitle,
+          logText: safeLogText,
+          equipmentId: safeEquipmentId,
+          imageUrl: imageUri,
+          audioFileUrl: audioUri,
+        });
+      } else {
+        await workLogService.createWorkLog({
+          title: safeTitle,
+          logText: safeLogText,
+          equipmentId: safeEquipmentId,
+          imageUrl: imageUri,
+          audioFileUrl: audioUri,
+        });
+      }
+      Alert.alert("저장 완료", "작업일지가 저장되었습니다.", [{ text: "확인", onPress: () => navigation.goBack() }]);
+    } catch (error) {
+      setError(toErrorMessage(error));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Screen>
+      <View style={styles.switchRow}>
+        {["text", "stt"].map((item) => (
+          <Pressable key={item} onPress={() => setMode(item as "text" | "stt")} style={[styles.switch, mode === item && styles.switchActive]}>
+            <Text style={[styles.switchText, mode === item && styles.switchTextActive]}>{item === "text" ? "텍스트 작성" : "음성(STT) 작성"}</Text>
+          </Pressable>
+        ))}
+      </View>
+
+      <AppCard style={styles.card}>
+        <AppInput label="제목" value={title} onChangeText={setTitle} placeholder="작업일지 제목" />
+        <AppInput label="설비 / 작업 구역 ID" value={equipmentId} onChangeText={setEquipmentId} keyboardType="numeric" placeholder="2" />
+        <AppInput
+          label="작업 내용"
+          value={logText}
+          onChangeText={setLogText}
+          multiline
+          numberOfLines={8}
+          textAlignVertical="top"
+          style={styles.textArea}
+          placeholder="작업 내용을 입력하세요"
+        />
+        <Text style={styles.author}>작성자: {userName ?? "김철수"}</Text>
+        <View style={styles.attachRow}>
+          <AppButton label={audioUri ? "음성 선택 완료" : "음성 첨부"} variant="secondary" onPress={pickAudio} style={styles.attachButton} />
+          <AppButton label={imageUri ? "이미지 선택 완료" : "이미지 첨부"} variant="secondary" onPress={pickImage} style={styles.attachButton} />
+        </View>
+        {error ? <Text style={styles.error}>{error}</Text> : null}
+        <View style={styles.submitRow}>
+          <AppButton label="번역 보기" variant="secondary" onPress={() => navigation.navigate("WorkLogTranslation", {})} style={styles.half} />
+          <AppButton label="제출하기" onPress={handleSubmit} loading={loading} style={styles.half} />
+        </View>
+      </AppCard>
+    </Screen>
+  );
+}
+
+const styles = StyleSheet.create({
+  switchRow: {
+    flexDirection: "row",
+    backgroundColor: "#EEF1F5",
+    borderRadius: theme.radius.pill,
+    padding: 4,
+  },
+  switch: {
+    flex: 1,
+    borderRadius: theme.radius.pill,
+    paddingVertical: 12,
+    alignItems: "center",
+  },
+  switchActive: {
+    backgroundColor: "#FFFFFF",
+  },
+  switchText: {
+    fontWeight: "700",
+    color: theme.colors.subText,
+  },
+  switchTextActive: {
+    color: theme.colors.text,
+  },
+  card: {
+    gap: 16,
+  },
+  textArea: {
+    minHeight: 160,
+    paddingTop: 18,
+  },
+  author: {
+    color: theme.colors.subText,
+    fontWeight: "600",
+  },
+  attachRow: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  attachButton: {
+    flex: 1,
+  },
+  submitRow: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  half: {
+    flex: 1,
+  },
+  error: {
+    color: theme.colors.danger,
+  },
+});

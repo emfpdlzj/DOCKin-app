@@ -1,8 +1,7 @@
 // app/(auth)/signup.tsx
 import { useState } from "react";
-import { View, Text, TextInput, Pressable, StyleSheet, Alert } from "react-native";
+import { View, Text, TextInput, Pressable, StyleSheet, Alert, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { Image } from "expo-image";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Link, router } from "expo-router";
 import { theme } from "@/constants/theme";
@@ -10,6 +9,8 @@ import { useAuthStore } from "@/stores/auth.store";
 import { DEFAULT_SIGNUP } from "@/constants/defaults";
 import { ApiError } from "@/api/client";
 import { ERROR_MESSAGE } from "@/api/dto/error";
+import type { MemberRole } from "@/api/dto";
+import TitleLogo from "@/assets/dkTitle.png";
 
 export default function SignupScreen() {
     const signup = useAuthStore((s) => s.signup);
@@ -17,6 +18,7 @@ export default function SignupScreen() {
     const [userId, setUserId] = useState("");
     const [name, setName] = useState("");
     const [password, setPassword] = useState("");
+    const [role, setRole] = useState<MemberRole>(DEFAULT_SIGNUP.role);
     const [loading, setLoading] = useState(false);
 
     const onSubmit = async () => {
@@ -26,6 +28,7 @@ export default function SignupScreen() {
                 userId,
                 name,
                 password,
+                role,
                 language_code: DEFAULT_SIGNUP.language_code,
                 tts_enabled: DEFAULT_SIGNUP.tts_enabled,
                 shipYardArea: DEFAULT_SIGNUP.shipYardArea,
@@ -47,11 +50,7 @@ export default function SignupScreen() {
             </Pressable>
 
             <View style={styles.header}>
-                <Image
-                    source={require("@/assets/title.svg")}
-                    style={styles.logo}
-                    contentFit="contain"
-                />
+                <Image source={TitleLogo} style={{ width: 240, height: 120 }} resizeMode="contain" />
             </View>
 
             <View style={styles.body}>
@@ -79,6 +78,24 @@ export default function SignupScreen() {
                     secureTextEntry
                 />
 
+                {/* ✅ 역할 선택 (라디오) */}
+                <Text style={styles.label}>역할</Text>
+                <View style={styles.roleRow}>
+                    <RoleRadio
+                        label="근로자"
+                        value="USER"
+                        selected={role === "USER"}
+                        onPress={() => setRole("USER")}
+                    />
+                    <View style={{ width: 12 }} />
+                    <RoleRadio
+                        label="관리자"
+                        value="ADMIN"
+                        selected={role === "ADMIN"}
+                        onPress={() => setRole("ADMIN")}
+                    />
+                </View>
+
                 <Pressable onPress={onSubmit} disabled={loading} style={styles.primaryBtn}>
                     <Text style={styles.primaryText}>{loading ? "처리 중..." : "회원가입 완료"}</Text>
                 </Pressable>
@@ -91,6 +108,24 @@ export default function SignupScreen() {
                 </Text>
             </View>
         </LinearGradient>
+    );
+}
+
+function RoleRadio(props: {
+    label: string;
+    value: MemberRole;
+    selected: boolean;
+    onPress: () => void;
+}) {
+    const { label, selected, onPress } = props;
+
+    return (
+        <Pressable onPress={onPress} style={[styles.roleItem, selected && styles.roleItemOn]}>
+            <View style={[styles.radioOuter, selected && styles.radioOuterOn]}>
+                {selected ? <View style={styles.radioInner} /> : null}
+            </View>
+            <Text style={[styles.roleText, selected && styles.roleTextOn]}>{label}</Text>
+        </Pressable>
     );
 }
 
@@ -116,11 +151,9 @@ const styles = StyleSheet.create({
         zIndex: 10,
     },
     header: { alignItems: "center", paddingTop: 90, paddingBottom: 10 },
-    logo: { width: 240, height: 120 },
     body: { paddingHorizontal: 24, paddingTop: 6 },
     title: { fontSize: 36, fontWeight: "900", color: theme.colors.text, marginBottom: 6 },
     desc: { color: theme.colors.subText, fontWeight: "700", marginBottom: 18 },
-
     label: { fontSize: 16, fontWeight: "800", color: theme.colors.text, marginTop: 14, marginBottom: 8 },
     input: {
         height: 56,
@@ -129,6 +162,46 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         fontSize: 16,
     },
+
+    // ✅ 역할 라디오
+    roleRow: { flexDirection: "row", alignItems: "center" },
+    roleItem: {
+        flex: 1,
+        height: 56,
+        borderRadius: theme.radius.input,
+        backgroundColor: theme.colors.inputBg,
+        flexDirection: "row",
+        alignItems: "center",
+        paddingHorizontal: 16,
+        borderWidth: 1,
+        borderColor: "transparent",
+    },
+    roleItemOn: {
+        borderColor: theme.colors.orange,
+        backgroundColor: theme.colors.inputBg,
+    },
+    radioOuter: {
+        width: 20,
+        height: 20,
+        borderRadius: 10,
+        borderWidth: 2,
+        borderColor: "#BDBDBD",
+        justifyContent: "center",
+        alignItems: "center",
+        marginRight: 10,
+        backgroundColor: "#fff",
+    },
+    radioOuterOn: {
+        borderColor: theme.colors.orange,
+    },
+    radioInner: {
+        width: 10,
+        height: 10,
+        borderRadius: 5,
+        backgroundColor: theme.colors.orange,
+    },
+    roleText: { fontSize: 16, fontWeight: "800", color: theme.colors.text },
+    roleTextOn: { color: theme.colors.text },
 
     primaryBtn: {
         marginTop: 26,
@@ -139,7 +212,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     primaryText: { color: "#fff", fontSize: 20, fontWeight: "900" },
-
     bottomText: { textAlign: "center", marginTop: 18, color: theme.colors.subText, fontWeight: "700" },
     link: { color: theme.colors.orange, fontWeight: "900" },
 });

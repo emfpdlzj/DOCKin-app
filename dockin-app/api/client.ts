@@ -3,13 +3,11 @@ import { Platform } from "react-native";
 import type { ApiErrorResponse, CommonErrorCode } from "@/api/dto/error";
 
 function getDefaultBaseUrl() {
-    // 물리 디바이스/공유 개발환경이면 여기로 통일 (ex:http://192.168.0.12:8080)
     const env = process.env.EXPO_PUBLIC_API_BASE_URL;
     if (env && env.startsWith("http")) return env;
 
-    // 에뮬레이터 기본값
-    if (Platform.OS === "android") return "http://10.0.2.2:8081"; //OS에따라 분기
-    return "http://localhost:8081";
+    if (Platform.OS === "android") return "http://10.0.2.2:8080";
+    return "http://localhost:8080";
 }
 
 const DEFAULT_BASE_URL = getDefaultBaseUrl();
@@ -29,12 +27,7 @@ export class ApiError extends Error {
 }
 
 function isApiErrorResponse(x: any): x is ApiErrorResponse {
-    return (
-        x &&
-        typeof x === "object" &&
-        typeof x.code === "string" &&
-        typeof x.message === "string"
-    );
+    return x && typeof x === "object" && typeof x.code === "string" && typeof x.message === "string";
 }
 
 export async function apiRequest<T>(
@@ -65,8 +58,7 @@ export async function apiRequest<T>(
             throw new ApiError(data.message, res.status, data.code);
         }
         const fallbackMsg =
-            (data && typeof data.message === "string" && data.message) ||
-            `요청에 실패했습니다. (${res.status})`;
+            (data && typeof data.message === "string" && data.message) || `요청에 실패했습니다. (${res.status})`;
         throw new ApiError(fallbackMsg, res.status);
     }
 

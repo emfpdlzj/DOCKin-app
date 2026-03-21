@@ -1,14 +1,14 @@
 // app/(auth)/login.tsx
 import { useState } from "react";
-import { View, Text, TextInput, Pressable, StyleSheet, Alert } from "react-native";
+import { View, Text, TextInput, Pressable, StyleSheet, Alert, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { Image } from "expo-image";
-import { Link } from "expo-router";
+import TitleLogo from "@/assets/dkTitle.png";
 import { MaterialIcons } from "@expo/vector-icons";
 import { theme } from "@/constants/theme";
 import { useAuthStore } from "@/stores/auth.store";
 import { ApiError } from "@/api/client";
 import { ERROR_MESSAGE } from "@/api/dto/error";
+import { router } from "expo-router";
 
 export default function LoginScreen() {
     const login = useAuthStore((s) => s.login);
@@ -23,6 +23,9 @@ export default function LoginScreen() {
         try {
             setLoading(true);
             await login({ userId, password }, keepLogin);
+            const s = useAuthStore.getState();
+            console.log("AFTER LOGIN:", { isAuthed: s.isAuthed, role: s.role, name: s.name });
+            router.replace("/"); // 루트로 보내고, app/index.tsx가 role에 따라 분기
         } catch (e) {
             Alert.alert("로그인 실패", toUserMessage(e));
         } finally {
@@ -37,11 +40,7 @@ export default function LoginScreen() {
             </Pressable>
 
             <View style={styles.header}>
-                <Image
-                    source={require("../../assets/title.svg")}
-                    style={styles.logo}
-                    contentFit="contain"
-                />
+                <Image source={TitleLogo} style={{ width: 240, height: 120 }} resizeMode="contain" />
             </View>
 
             <View style={styles.body}>

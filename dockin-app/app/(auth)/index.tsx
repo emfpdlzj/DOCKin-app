@@ -1,31 +1,45 @@
-// app/(auth)/index.tsx
-import { View, Text, Pressable, StyleSheet } from "react-native";
+//(auth)/index.tsx
+import { View, Text, Pressable, StyleSheet, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { Image } from "expo-image";
 import { Link, router } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import { theme } from "@/constants/theme";
+import type { Href } from "expo-router";
+
+const TitleLogo = require("../../assets/dkTitle.png"); // PNG는 require로 해야함
 
 export default function StartScreen() {
     return (
-        <LinearGradient
-            colors={[theme.colors.bgTop, theme.colors.bgBottom]}
-            style={styles.container}
-        >
+        <LinearGradient colors={[theme.colors.bgTop, theme.colors.bgBottom]} style={styles.container}>
             <Pressable style={styles.langBtn} onPress={() => {}}>
                 <MaterialIcons name="language" size={24} color={theme.colors.icon} />
             </Pressable>
 
             <View style={styles.center}>
-                <Image
-                    source={require("../../assets/title.svg")}
-                    style={styles.logo}
-                    contentFit="contain"
-                />
+                <View style={styles.logoWrap}>
+                    <Image source={TitleLogo} style={styles.logo} resizeMode="contain" />
+                </View>
 
                 <Pressable style={styles.primaryBtn} onPress={() => router.push("/(auth)/login")}>
                     <Text style={styles.primaryText}>시작하기</Text>
                 </Pressable>
+
+                {/* 개발용 바로가기 버튼 2개 */}
+                <View style={styles.devRow}>
+                    <Pressable
+                        style={[styles.devBtn, styles.devBtnOutline]}
+                        onPress={() => router.replace("/(admin)/home")}
+                    >
+                        <Text style={[styles.devText, styles.devTextOutline]}>관리자 화면 보기</Text>
+                    </Pressable>
+
+                    <Pressable
+                        style={styles.devBtn}
+                        onPress={() => router.replace("/(worker)/home")}
+                    >
+                        <Text style={styles.devText}>근로자 화면 보기</Text>
+                    </Pressable>
+                </View>
 
                 <Text style={styles.bottomText}>
                     도크인이 처음인가요??{" "}
@@ -51,7 +65,9 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     center: { flex: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: 24 },
-    logo: { width: 260, height: 180, marginBottom: 48 },
+    logoWrap: { marginBottom: 48, alignItems: "center", justifyContent: "center" },
+    logo: { width: 260, height: 180 },
+
     primaryBtn: {
         width: "88%",
         height: 64,
@@ -66,6 +82,20 @@ const styles = StyleSheet.create({
         elevation: 8,
     },
     primaryText: { color: "#fff", fontSize: 22, fontWeight: "800" },
+
+    // 개발용 버튼 스타일
+    devRow: { width: "88%", marginTop: 12, gap: 10 },
+    devBtn: {
+        height: 52,
+        borderRadius: 18,
+        backgroundColor: "#111",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    devText: { color: "#fff", fontSize: 16, fontWeight: "800" },
+    devBtnOutline: { backgroundColor: "transparent", borderWidth: 2, borderColor: "#111" },
+    devTextOutline: { color: "#111" },
+
     bottomText: { marginTop: 12, color: theme.colors.subText, fontWeight: "600" },
     link: { color: theme.colors.orange, fontWeight: "800" },
 });

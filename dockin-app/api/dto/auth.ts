@@ -20,6 +20,8 @@ export type LoginRequestDto = {
 export type LoginResponseDto = {
   accessToken: string;
   refreshToken: string;
+    role: MemberRole; // 추가 !
+    name: string; // 추가  !
 };
 
 export type LogOutRequestDto = {

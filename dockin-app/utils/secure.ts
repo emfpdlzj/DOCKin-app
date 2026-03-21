@@ -7,6 +7,7 @@ export type PersistedAuth = {
     accessToken: string;
     refreshToken: string;
     role: "USER" | "ADMIN";
+    name?: string; // ✅ 추가
 };
 
 export async function saveAuth(data: PersistedAuth) {
