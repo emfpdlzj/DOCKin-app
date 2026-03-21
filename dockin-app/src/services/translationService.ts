@@ -21,17 +21,22 @@ export const translationService = {
 
   async realtimeTranslate(payload: {
     audioUri?: string;
+    audioFile?: Blob | File;
+    fileName?: string;
+    mimeType?: string;
     source: string;
     target: string;
     traceId: string;
   }): Promise<RealtimeTranslateResponse> {
     const form = new FormData();
-    if (payload.audioUri) {
+    if (payload.audioFile) {
+      form.append("file", payload.audioFile, payload.fileName ?? "realtime.webm");
+    } else if (payload.audioUri) {
       const normalizedUri = payload.audioUri.toLowerCase();
       const isM4a = normalizedUri.endsWith(".m4a");
       const isMp3 = normalizedUri.endsWith(".mp3");
-      const mimeType = isM4a ? "audio/m4a" : isMp3 ? "audio/mpeg" : "audio/wav";
-      const fileName = isM4a ? "realtime.m4a" : isMp3 ? "realtime.mp3" : "realtime.wav";
+      const mimeType = payload.mimeType ?? (isM4a ? "audio/m4a" : isMp3 ? "audio/mpeg" : "audio/wav");
+      const fileName = payload.fileName ?? (isM4a ? "realtime.m4a" : isMp3 ? "realtime.mp3" : "realtime.wav");
       form.append("file", {
         uri: payload.audioUri,
         type: mimeType,

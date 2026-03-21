@@ -46,6 +46,21 @@ export function ChatRoomListScreen({ navigation }: any) {
   };
 
   const handleDeleteRoom = (room: ChatRoom) => {
+    if (typeof window !== "undefined") {
+      const confirmed = window.confirm(`'${room.title}' 채팅방을 삭제할까요?`);
+      if (!confirmed) return;
+      void (async () => {
+        setDeletingRoomId(room.roomId);
+        try {
+          await chatService.deleteRoom(room.roomId);
+          await reload();
+        } finally {
+          setDeletingRoomId(null);
+        }
+      })();
+      return;
+    }
+
     Alert.alert("채팅방 삭제", `'${room.title}' 채팅방을 삭제할까요?`, [
       { text: "취소", style: "cancel" },
       {
@@ -68,9 +83,6 @@ export function ChatRoomListScreen({ navigation }: any) {
     <Screen>
       <View style={styles.header}>
         <Text style={styles.title}>채팅방 목록</Text>
-        <Pressable onPress={() => navigation.navigate("Settings")}>
-          <MaterialIcons name="person-outline" size={28} color={theme.colors.text} />
-        </Pressable>
       </View>
       <AppCard style={styles.toolbar}>
         <Pressable style={styles.toolbarButton} onPress={() => setSearchOpen((prev) => !prev)}>

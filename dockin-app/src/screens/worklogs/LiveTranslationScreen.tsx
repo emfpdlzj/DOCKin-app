@@ -34,6 +34,9 @@ export function LiveTranslationScreen() {
   const [recording, setRecording] = useState(false);
   const [pickerTarget, setPickerTarget] = useState<"source" | "target" | null>(null);
   const recordingRef = useRef<Audio.Recording | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const mediaStreamRef = useRef<MediaStream | null>(null);
+  const webChunksRef = useRef<Blob[]>([]);
   const pickAudio = async () => {
     const result = await DocumentPicker.getDocumentAsync({ type: ["audio/*"] });
     if (!result.canceled) {
@@ -66,7 +69,22 @@ export function LiveTranslationScreen() {
 
   const startRecording = async () => {
     if (Platform.OS === "web") {
-      Alert.alert("웹 미지원", "웹에서는 브라우저 녹음 대신 음성 파일 선택을 사용해주세요.");
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const mediaRecorder = new MediaRecorder(stream);
+        webChunksRef.current = [];
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            webChunksRef.current.push(event.data);
+          }
+        };
+        mediaRecorder.start();
+        mediaRecorderRef.current = mediaRecorder;
+        mediaStreamRef.current = stream;
+        setRecording(true);
+      } catch {
+        Alert.alert("마이크 권한 필요", "브라우저에서 마이크 권한을 허용해주세요.");
+      }
       return;
     }
 
@@ -89,6 +107,46 @@ export function LiveTranslationScreen() {
   };
 
   const stopRecordingAndTranslate = async () => {
+    if (Platform.OS === "web") {
+      const mediaRecorder = mediaRecorderRef.current;
+      if (!mediaRecorder) return;
+
+      await new Promise<void>((resolve) => {
+        mediaRecorder.onstop = () => resolve();
+        mediaRecorder.stop();
+      });
+
+      mediaStreamRef.current?.getTracks().forEach((track) => track.stop());
+      mediaRecorderRef.current = null;
+      mediaStreamRef.current = null;
+      setRecording(false);
+
+      const blob = new Blob(webChunksRef.current, { type: "audio/webm" });
+      if (!blob.size) {
+        Alert.alert("녹음 실패", "음성 파일을 만들지 못했습니다.");
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const result = await translationService.realtimeTranslate({
+          audioFile: blob,
+          fileName: "realtime.webm",
+          mimeType: "audio/webm",
+          source,
+          target,
+          traceId: createTraceId("rt"),
+        });
+        setSourceText(result.originalText || sourceText);
+        setTranslatedText(result.translatedText || translatedText);
+      } catch {
+        Alert.alert("녹음 오류", "녹음 또는 번역 요청 중 문제가 발생했습니다.");
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
     if (!recordingRef.current) {
       return;
     }
@@ -124,6 +182,15 @@ export function LiveTranslationScreen() {
       setLoading(false);
       setRecording(false);
     }
+  };
+
+  const handleMicPress = async () => {
+    if (loading) return;
+    if (recording) {
+      await stopRecordingAndTranslate();
+      return;
+    }
+    await startRecording();
   };
 
   return (
@@ -180,12 +247,11 @@ export function LiveTranslationScreen() {
         <AppButton label={audioUri ? "음성 파일 번역" : "음성 파일 선택"} variant="secondary" onPress={audioUri ? handleTranslate : pickAudio} style={styles.uploadButton} />
         <Pressable
           style={[styles.speakButton, recording && styles.speakButtonRecording]}
-          onPressIn={startRecording}
-          onPressOut={stopRecordingAndTranslate}
+          onPress={handleMicPress}
         >
           <MaterialCommunityIcons name="microphone-outline" size={30} color="#FFFFFF" />
           <Text style={styles.speakText}>
-            {recording ? "녹음중..." : loading ? "번역중..." : "말하기"}
+            {recording ? "말하는 중..." : loading ? "번역중..." : "말하기"}
           </Text>
         </Pressable>
       </View>

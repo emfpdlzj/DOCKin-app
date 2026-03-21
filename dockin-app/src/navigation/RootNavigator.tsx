@@ -57,10 +57,11 @@ function stackScreenOptions(title?: string) {
   return {
     headerShown: true,
     title,
-    headerStyle: { backgroundColor: theme.colors.primary },
+    headerStyle: { backgroundColor: theme.colors.primary, height: 104 },
     headerTintColor: "#FFFFFF",
     headerShadowVisible: false,
     headerTitleStyle: { fontWeight: "800" as const, fontSize: 28 },
+    headerTitleAlign: "left" as const,
     headerBackTitleVisible: false,
     contentStyle: { backgroundColor: theme.colors.background },
   };
@@ -129,13 +130,14 @@ function WorkLogNavigator() {
 
 function SafetyNavigator() {
   const role = useAuthStore((state) => state.role);
+  const title = role === "ADMIN" ? "안전점검" : "안전교육";
 
   return (
     <SafetyStack.Navigator screenOptions={stackScreenOptions()}>
       <SafetyStack.Screen
         name="SafetyRoot"
         component={role === "ADMIN" ? AdminSafetyInspectionScreen : SafetyEducationScreen}
-        options={stackScreenOptions("안전점검")}
+        options={stackScreenOptions(title)}
       />
     </SafetyStack.Navigator>
   );
@@ -187,7 +189,7 @@ function MainTabs() {
       <Tab.Screen name="Chat" component={ChatNavigator} options={{ tabBarLabel: "채팅" }} />
       <Tab.Screen name="Home" component={HomeNavigator} options={{ tabBarLabel: role === "ADMIN" ? "관리자기능" : "근태" }} />
       <Tab.Screen name="WorkLogs" component={WorkLogNavigator} options={{ tabBarLabel: "작업일지" }} />
-      <Tab.Screen name="Safety" component={SafetyNavigator} options={{ tabBarLabel: "안전점검" }} />
+      <Tab.Screen name="Safety" component={SafetyNavigator} options={{ tabBarLabel: role === "ADMIN" ? "안전점검" : "안전교육" }} />
     </Tab.Navigator>
   );
 }

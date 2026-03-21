@@ -115,11 +115,20 @@ export function WorkLogEditorScreen({ navigation, route }: Props) {
   return (
     <Screen contentStyle={styles.screenContent}>
       <View style={styles.switchRow}>
-        {["text", "stt"].map((item) => (
-          <Pressable key={item} onPress={() => setMode(item as "text" | "stt")} style={[styles.switch, mode === item && styles.switchActive]}>
-            <Text style={[styles.switchText, mode === item && styles.switchTextActive]}>{item === "text" ? "작성" : "번역/STT"}</Text>
-          </Pressable>
-        ))}
+        <Pressable onPress={() => {}} style={[styles.switch, styles.switchActive]}>
+          <Text style={[styles.switchText, styles.switchTextActive]}>작성</Text>
+        </Pressable>
+        <Pressable onPress={() => navigation.navigate("WorkLogTranslation", { logId: route.params.logId })} style={styles.switch}>
+          <Text style={styles.switchText}>번역</Text>
+        </Pressable>
+      </View>
+      <View style={styles.modeRow}>
+        <Pressable onPress={() => setMode("text")} style={[styles.modePill, mode === "text" && styles.modePillActive]}>
+          <Text style={[styles.modePillText, mode === "text" && styles.modePillTextActive]}>텍스트 입력</Text>
+        </Pressable>
+        <Pressable onPress={() => setMode("stt")} style={[styles.modePill, mode === "stt" && styles.modePillActive]}>
+          <Text style={[styles.modePillText, mode === "stt" && styles.modePillTextActive]}>음성 입력</Text>
+        </Pressable>
       </View>
 
       <AppCard style={styles.card}>
@@ -186,6 +195,27 @@ const styles = StyleSheet.create({
   },
   switchTextActive: {
     color: theme.colors.text,
+  },
+  modeRow: {
+    flexDirection: "row",
+    gap: 10,
+  },
+  modePill: {
+    flex: 1,
+    backgroundColor: "#EEF1F5",
+    borderRadius: theme.radius.pill,
+    alignItems: "center",
+    paddingVertical: 10,
+  },
+  modePillActive: {
+    backgroundColor: "#FFF0DD",
+  },
+  modePillText: {
+    color: theme.colors.subText,
+    fontWeight: "700",
+  },
+  modePillTextActive: {
+    color: theme.colors.accent,
   },
   card: {
     gap: 16,

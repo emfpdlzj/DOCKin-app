@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Screen } from "@/src/components/common/Screen";
 import { AppCard } from "@/src/components/common/AppCard";
@@ -19,10 +19,14 @@ type Props = NativeStackScreenProps<RootStackParamList, "WorkLogTranslation">;
 export function WorkLogTranslationScreen({ route }: Props) {
   const loadLogs = useCallback(() => workLogService.getWorkLogs(), []);
   const { data, loading, error } = useAsyncData(loadLogs);
-  const selected = useMemo(
-    () => data?.find((item: WorkLog) => item.logId === route.params?.logId) ?? data?.[0],
-    [data, route.params?.logId],
-  );
+  const [selectedId, setSelectedId] = useState<number | undefined>(route.params?.logId);
+  const selected = useMemo(() => {
+    return (
+      data?.find((item: WorkLog) => item.logId === selectedId) ??
+      data?.find((item: WorkLog) => item.logId === route.params?.logId) ??
+      data?.[0]
+    );
+  }, [data, route.params?.logId, selectedId]);
   const [target, setTarget] = useState<LanguageCode>("ko");
   const [translated, setTranslated] = useState("");
   const [translating, setTranslating] = useState(false);
@@ -49,8 +53,18 @@ export function WorkLogTranslationScreen({ route }: Props) {
         <>
           <AppCard>
             <Text style={styles.label}>작업일지 선택</Text>
-            <Text style={styles.selected}>{selected.title}</Text>
-            <Text style={styles.meta}>{new Date(selected.createdAt).toLocaleString()}</Text>
+            <View style={styles.logList}>
+              {data?.map((item: WorkLog) => (
+                <Pressable
+                  key={item.logId}
+                  style={[styles.logOption, selected.logId === item.logId && styles.logOptionActive]}
+                  onPress={() => setSelectedId(item.logId)}
+                >
+                  <Text style={[styles.selected, selected.logId === item.logId && styles.selectedActive]}>{item.title}</Text>
+                  <Text style={styles.meta}>{new Date(item.createdAt).toLocaleString()}</Text>
+                </Pressable>
+              ))}
+            </View>
           </AppCard>
           <AppCard>
             <Text style={styles.label}>언어 변경</Text>
@@ -86,7 +100,11 @@ const styles = StyleSheet.create({
   error: { color: theme.colors.danger },
   label: { fontSize: 16, fontWeight: "700", color: theme.colors.text, marginBottom: 8 },
   selected: { fontSize: 18, fontWeight: "700", color: theme.colors.text },
+  selectedActive: { color: theme.colors.primary },
   meta: { color: theme.colors.subText, marginTop: 4 },
+  logList: { gap: 10 },
+  logOption: { padding: 14, borderRadius: 14, backgroundColor: "#F5F7FB" },
+  logOptionActive: { borderWidth: 1.5, borderColor: theme.colors.primary, backgroundColor: "#EEF6FF" },
   languageRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 16 },
   languageButton: { minHeight: 42, paddingHorizontal: 14 },
   readonly: {
