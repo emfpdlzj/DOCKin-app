@@ -57,6 +57,10 @@ export const chatService = {
     return toChatRoom(response.data);
   },
 
+  async deleteRoom(roomId: number) {
+    await springApi.delete(`/api/chat/room/${roomId}`);
+  },
+
   async getMessages(roomId: number) {
     const response = await springApi.get(`/api/chat/room/${roomId}/messages`, {
       params: toSearchParams(),

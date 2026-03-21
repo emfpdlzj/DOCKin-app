@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Screen } from "@/src/components/common/Screen";
 import { AppCard } from "@/src/components/common/AppCard";
@@ -22,6 +22,7 @@ export function ChatRoomListScreen({ navigation }: any) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [deletingRoomId, setDeletingRoomId] = useState<number | null>(null);
 
   const filteredRooms = useMemo(
     () => (data ?? []).filter((room: ChatRoom) => room.title.toLowerCase().includes(searchKeyword.trim().toLowerCase())),
@@ -42,6 +43,25 @@ export function ChatRoomListScreen({ navigation }: any) {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleDeleteRoom = (room: ChatRoom) => {
+    Alert.alert("채팅방 삭제", `'${room.title}' 채팅방을 삭제할까요?`, [
+      { text: "취소", style: "cancel" },
+      {
+        text: "삭제",
+        style: "destructive",
+        onPress: async () => {
+          setDeletingRoomId(room.roomId);
+          try {
+            await chatService.deleteRoom(room.roomId);
+            await reload();
+          } finally {
+            setDeletingRoomId(null);
+          }
+        },
+      },
+    ]);
   };
 
   return (
@@ -81,18 +101,27 @@ export function ChatRoomListScreen({ navigation }: any) {
       {loading ? <LoadingState /> : null}
       {!loading && !filteredRooms.length ? <EmptyState title={searchKeyword ? "검색 결과가 없습니다." : "채팅방이 없습니다."} /> : null}
       {filteredRooms.map((room: ChatRoom) => (
-        <Pressable key={room.roomId} onPress={() => navigation.navigate("ChatRoom", { roomId: room.roomId, title: room.title })}>
-          <AppCard style={styles.roomCard}>
-            <View style={styles.roomHeader}>
-              <View style={styles.roomIdentity}>
-                <View style={styles.avatar} />
-                <Text style={styles.roomTitle}>{room.title}</Text>
+        <AppCard key={room.roomId} style={styles.roomCard}>
+          <View style={styles.roomTopRow}>
+            <Pressable style={styles.roomPressable} onPress={() => navigation.navigate("ChatRoom", { roomId: room.roomId, title: room.title })}>
+              <View style={styles.roomHeader}>
+                <View style={styles.roomIdentity}>
+                  <View style={styles.avatar} />
+                  <Text style={styles.roomTitle}>{room.title}</Text>
+                </View>
+                <StatusBadge label={room.isOnline ? "접속중" : "오프라인"} tone={room.isOnline ? "green" : "gray"} />
               </View>
-              <StatusBadge label={room.isOnline ? "접속중" : "오프라인"} tone={room.isOnline ? "green" : "gray"} />
-            </View>
-            <Text numberOfLines={1} style={styles.lastMessage}>{room.lastMessage}</Text>
-          </AppCard>
-        </Pressable>
+              <Text numberOfLines={1} style={styles.lastMessage}>{room.lastMessage}</Text>
+            </Pressable>
+            <Pressable style={styles.deleteButton} onPress={() => handleDeleteRoom(room)}>
+              <MaterialIcons
+                name={deletingRoomId === room.roomId ? "hourglass-empty" : "delete-outline"}
+                size={26}
+                color={deletingRoomId === room.roomId ? theme.colors.subText : "#C8CDD4"}
+              />
+            </Pressable>
+          </View>
+        </AppCard>
       ))}
       <AppCard>
         <Pressable onPress={() => navigation.navigate("Chatbot")}>
@@ -113,11 +142,14 @@ const styles = StyleSheet.create({
   inlineButton: { flex: 1 },
   search: { color: theme.colors.primary, fontWeight: "700", fontSize: 18 },
   roomCard: { gap: 10, paddingVertical: 14 },
+  roomTopRow: { flexDirection: "row", gap: 10, alignItems: "flex-start" },
+  roomPressable: { flex: 1 },
   roomHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   roomIdentity: { flexDirection: "row", alignItems: "center", gap: 12, flex: 1 },
   avatar: { width: 52, height: 52, borderRadius: 16, backgroundColor: "#C8D6E6" },
   roomTitle: { fontSize: 20, fontWeight: "800", color: theme.colors.text },
   lastMessage: { color: theme.colors.subText, fontSize: 16, backgroundColor: "#E6F0FA", borderRadius: 12, paddingHorizontal: 12, paddingVertical: 10, marginLeft: 64 },
+  deleteButton: { paddingTop: 6, paddingHorizontal: 4 },
   chatbot: { fontSize: 18, fontWeight: "800", color: theme.colors.primary, textAlign: "center" },
   error: { color: theme.colors.danger },
 });
