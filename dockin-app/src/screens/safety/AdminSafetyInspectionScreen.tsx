@@ -81,7 +81,7 @@ export function AdminSafetyInspectionScreen() {
   };
 
   return (
-    <Screen>
+    <Screen contentStyle={styles.screenContent}>
       <AppCard style={styles.monthCard}>
         <Text style={styles.monthLabel}>조회 월 선택</Text>
         <View style={styles.monthField}>
@@ -124,7 +124,7 @@ export function AdminSafetyInspectionScreen() {
             </TouchableOpacity>
           </View>
 
-          <AppCard>
+          <AppCard style={styles.workerCard}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>근로자 이수현황</Text>
               <View style={styles.countPill}><Text style={styles.countPillText}>{shownWorkers.length}명</Text></View>
@@ -190,38 +190,43 @@ export function AdminSafetyInspectionScreen() {
 }
 
 const styles = StyleSheet.create({
-  monthCard: { gap: 10 },
+  screenContent: {
+    paddingTop: 14,
+    paddingBottom: 42,
+  },
+  monthCard: { gap: 10, borderRadius: 22 },
   monthLabel: { fontSize: 18, fontWeight: "700", color: theme.colors.text },
   monthField: { backgroundColor: "#F3F4FA", borderRadius: 14, paddingHorizontal: 16, paddingVertical: 14 },
   monthValue: { color: "#8E95A3", fontSize: 18 },
   grid: { flexDirection: "row", flexWrap: "wrap", gap: 12 },
-  tile: { width: "47%", minHeight: 132 },
+  tile: { width: "47%", minHeight: 132, borderRadius: 20 },
   dot: { width: 30, height: 30, borderRadius: 15, marginBottom: 12 },
   tileLabel: { color: theme.colors.text, fontSize: 16, fontWeight: "600" },
   tileValue: { fontSize: 24, fontWeight: "900", color: theme.colors.text, marginTop: 16 },
   segmentWrap: { flexDirection: "row", gap: 10 },
-  segmentButton: { flex: 1, backgroundColor: "#FFFFFF", borderRadius: 12, paddingVertical: 12, alignItems: "center" },
-  segmentActive: { backgroundColor: "#555555" },
-  segmentText: { color: theme.colors.text, fontWeight: "800" },
+  segmentButton: { flex: 1, backgroundColor: "#FFFFFF", borderRadius: 12, paddingVertical: 12, alignItems: "center", minHeight: 52 },
+  segmentActive: { backgroundColor: "#5D5D5D" },
+  segmentText: { color: theme.colors.text, fontWeight: "800", fontSize: 16 },
   segmentTextActive: { color: "#FFFFFF" },
+  workerCard: { borderRadius: 22 },
   sectionHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 },
   sectionTitle: { fontSize: 20, fontWeight: "800", color: theme.colors.text },
   countPill: { backgroundColor: "#ECECEC", paddingHorizontal: 12, paddingVertical: 4, borderRadius: 999 },
   countPillText: { color: "#6E6E6E", fontWeight: "700" },
-  workerRow: { flexDirection: "row", gap: 12, paddingVertical: 10, alignItems: "center" },
-  workerAvatar: { width: 42, height: 42, borderRadius: 21, backgroundColor: "#D2E6FF", alignItems: "center", justifyContent: "center" },
-  workerAvatarText: { color: theme.colors.primary, fontWeight: "900" },
+  workerRow: { flexDirection: "row", gap: 12, paddingVertical: 12, alignItems: "center" },
+  workerAvatar: { width: 44, height: 44, borderRadius: 22, backgroundColor: "#CDE3FF", alignItems: "center", justifyContent: "center" },
+  workerAvatarText: { color: theme.colors.primary, fontWeight: "900", fontSize: 18 },
   workerContent: { flex: 1, gap: 8 },
   workerTop: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   workerName: { fontSize: 18, fontWeight: "800", color: theme.colors.text },
   workerMeta: { color: theme.colors.subText, marginTop: 2 },
-  progressTrack: { height: 6, backgroundColor: "#E6E8EE", borderRadius: 999, overflow: "hidden" },
+  progressTrack: { height: 6, backgroundColor: "#E6E8EE", borderRadius: 999, overflow: "hidden", marginRight: 8 },
   progressValue: { height: "100%", borderRadius: 999 },
   statusPill: { borderRadius: 999, paddingHorizontal: 14, paddingVertical: 6 },
   statusDone: { backgroundColor: "#24C25A" },
   statusPending: { backgroundColor: "#F44336" },
   statusPillText: { color: "#FFFFFF", fontWeight: "800" },
-  manageCard: { gap: 12 },
+  manageCard: { gap: 12, borderRadius: 22 },
   actionRow: { flexDirection: "row", gap: 10 },
   flexButton: { flex: 1 },
   courseItem: {

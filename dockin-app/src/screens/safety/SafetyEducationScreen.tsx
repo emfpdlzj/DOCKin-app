@@ -159,7 +159,7 @@ export function SafetyEducationScreen() {
   };
 
   return (
-    <Screen>
+    <Screen contentStyle={styles.screenContent}>
       <View style={styles.modeTabs}>
         <TouchableOpacity style={[styles.modeTab, mode === "education" && styles.modeTabActive]} onPress={() => setMode("education")}>
           <Text style={[styles.modeText, mode === "education" && styles.modeTextActive]}>교육이수</Text>
@@ -280,6 +280,10 @@ export function SafetyEducationScreen() {
 }
 
 const styles = StyleSheet.create({
+  screenContent: {
+    paddingTop: 14,
+    paddingBottom: 42,
+  },
   modeTabs: {
     flexDirection: "row",
     backgroundColor: "#EEF3F8",
@@ -325,16 +329,16 @@ const styles = StyleSheet.create({
   itemTitle: { fontSize: 18, fontWeight: "700", color: theme.colors.text },
   meta: { color: theme.colors.subText, marginTop: 4 },
   error: { color: theme.colors.danger },
-  periodTabs: { flexDirection: "row", gap: 0 },
-  periodTab: { flex: 1, backgroundColor: theme.colors.primary, paddingVertical: 14, alignItems: "center", borderTopLeftRadius: 16, borderTopRightRadius: 16 },
+  periodTabs: { flexDirection: "row", gap: 0, borderRadius: 16, overflow: "hidden" },
+  periodTab: { flex: 1, backgroundColor: theme.colors.primary, paddingVertical: 14, alignItems: "center" },
   periodTabActive: { backgroundColor: "#FFFFFF" },
   periodText: { color: "#FFFFFF", fontWeight: "800" },
   periodTextActive: { color: theme.colors.accent },
-  todayCard: { backgroundColor: "#DDEAF7", minHeight: 120, justifyContent: "center" },
+  todayCard: { backgroundColor: "#DDEAF7", minHeight: 120, justifyContent: "center", borderRadius: 22 },
   todayHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   todayTitle: { fontSize: 24, fontWeight: "800", color: theme.colors.text },
   todayCount: { fontSize: 22, fontWeight: "900", color: theme.colors.primary },
-  inspectionGroup: { gap: 10 },
+  inspectionGroup: { gap: 10, borderRadius: 22 },
   groupHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   groupTitle: { fontSize: 18, fontWeight: "800", color: theme.colors.text },
   groupCount: { fontSize: 18, fontWeight: "900", color: theme.colors.accent },
