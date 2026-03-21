@@ -12,11 +12,17 @@
     "assetBundlePatterns": ["**/*"],
 
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "실시간 번역을 위해 마이크 권한이 필요합니다."
+      }
     },
     "android": {
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "output": "static",
@@ -36,6 +42,7 @@
         }
       ],
       "expo-document-picker",
+      "expo-av",
       "expo-image-picker"
     ],
     "experiments": {
