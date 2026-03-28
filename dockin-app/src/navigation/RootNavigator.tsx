@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator, type BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, View } from "react-native";
 import { theme } from "@/src/theme/theme";
 import { useAuthStore } from "@/src/store/authStore";
 import { OnboardingScreen } from "@/src/screens/auth/OnboardingScreen";
@@ -23,6 +23,7 @@ import { ChatbotScreen } from "@/src/screens/chat/ChatbotScreen";
 import { SettingsScreen } from "@/src/screens/settings/SettingsScreen";
 import { AttendanceManagementScreen } from "@/src/screens/management/AttendanceManagementScreen";
 import { EmergencyNoticeScreen } from "@/src/screens/management/EmergencyNoticeScreen";
+import { FloatingTalkinButton } from "@/src/components/common/FloatingTalkinButton";
 import type { AuthStackParamList } from "@/src/navigation/types";
 import NavIcon0 from "../../assets/nav/icon0.svg";
 import NavIcon0Active from "../../assets/nav/icon0_Act.svg";
@@ -145,9 +146,9 @@ function SafetyNavigator() {
 
 function DockinTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const iconMap = {
-    Translate: { active: NavIcon0Active, inactive: NavIcon0 },
-    Chat: { active: NavIcon1Active, inactive: NavIcon1 },
-    Home: { active: NavIcon2Active, inactive: NavIcon2 },
+    Translate: { active: NavIcon1Active, inactive: NavIcon1 },
+    Chat: { active: NavIcon2Active, inactive: NavIcon2 },
+    Home: { active: NavIcon0Active, inactive: NavIcon0 },
     WorkLogs: { active: NavIcon3Active, inactive: NavIcon3 },
     Safety: { active: NavIcon4Active, inactive: NavIcon4 },
   } as const;
@@ -156,9 +157,7 @@ function DockinTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
     <View style={styles.tabOuter}>
       <View style={styles.tabBar}>
         {state.routes.map((route, index) => {
-          const { options } = descriptors[route.key];
           const focused = state.index === index;
-          const label = typeof options.tabBarLabel === "string" ? options.tabBarLabel : options.title ?? route.name;
           const Icon = focused ? iconMap[route.name as keyof typeof iconMap].active : iconMap[route.name as keyof typeof iconMap].inactive;
 
           return (
@@ -167,8 +166,7 @@ function DockinTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
               onPress={() => navigation.navigate(route.name)}
               style={styles.tabItem}
             >
-              <Icon width={28} height={28} />
-              <Text style={[styles.tabLabel, focused && styles.tabLabelFocused]}>{label}</Text>
+              <Icon width={56} height={56} />
             </Pressable>
           );
         })}
@@ -181,16 +179,19 @@ function MainTabs() {
   const role = useAuthStore((state) => state.role);
 
   return (
-    <Tab.Navigator
-      tabBar={(props) => <DockinTabBar {...props} />}
-      screenOptions={{ headerShown: false }}
-    >
-      <Tab.Screen name="Translate" component={TranslateNavigator} options={{ tabBarLabel: "번역" }} />
-      <Tab.Screen name="Chat" component={ChatNavigator} options={{ tabBarLabel: "채팅" }} />
-      <Tab.Screen name="Home" component={HomeNavigator} options={{ tabBarLabel: role === "ADMIN" ? "관리자기능" : "근태" }} />
-      <Tab.Screen name="WorkLogs" component={WorkLogNavigator} options={{ tabBarLabel: "작업일지" }} />
-      <Tab.Screen name="Safety" component={SafetyNavigator} options={{ tabBarLabel: role === "ADMIN" ? "안전점검" : "안전교육" }} />
-    </Tab.Navigator>
+    <View style={styles.mainTabsWrap}>
+      <Tab.Navigator
+        tabBar={(props) => <DockinTabBar {...props} />}
+        screenOptions={{ headerShown: false }}
+      >
+        <Tab.Screen name="Translate" component={TranslateNavigator} options={{ tabBarLabel: "번역" }} />
+        <Tab.Screen name="Chat" component={ChatNavigator} options={{ tabBarLabel: "채팅" }} />
+        <Tab.Screen name="Home" component={HomeNavigator} options={{ tabBarLabel: role === "ADMIN" ? "관리자기능" : "근태" }} />
+        <Tab.Screen name="WorkLogs" component={WorkLogNavigator} options={{ tabBarLabel: "작업일지" }} />
+        <Tab.Screen name="Safety" component={SafetyNavigator} options={{ tabBarLabel: role === "ADMIN" ? "안전점검" : "안전교육" }} />
+      </Tab.Navigator>
+      <FloatingTalkinButton />
+    </View>
   );
 }
 
@@ -206,7 +207,7 @@ export function RootNavigator() {
   if (!hydrated) {
     return (
       <View style={styles.loadingScreen}>
-        <Image source={require("../../assets/dkTitle.png")} resizeMode="contain" style={styles.loadingLogo} />
+        <Image source={require("../../assets/logo.png")} resizeMode="contain" style={styles.loadingLogo} />
       </View>
     );
   }
@@ -224,10 +225,13 @@ export function RootNavigator() {
 }
 
 const styles = StyleSheet.create({
+  mainTabsWrap: {
+    flex: 1,
+  },
   tabOuter: {
     backgroundColor: "transparent",
-    paddingHorizontal: 8,
-    paddingBottom: 10,
+    paddingHorizontal: 2,
+    paddingBottom: 4,
   },
   tabBar: {
     flexDirection: "row",
@@ -235,8 +239,8 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: "#E3EAF2",
     minHeight: 84,
-    paddingTop: 10,
-    paddingBottom: 14,
+    paddingTop: 4,
+    paddingBottom: 4,
     shadowColor: "#AEBFD1",
     shadowOffset: { width: 0, height: -6 },
     shadowOpacity: 0.08,
@@ -247,15 +251,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    gap: 4,
-  },
-  tabLabel: {
-    fontSize: 11,
-    fontWeight: "700",
-    color: "#C7D0DA",
-  },
-  tabLabelFocused: {
-    color: theme.colors.primary,
+    marginHorizontal: -4,
   },
   loadingScreen: {
     flex: 1,

@@ -14,9 +14,8 @@ export function AppCard({ children, style }: Props) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: theme.colors.card,
-    borderRadius: theme.radius.lg,
+    borderRadius: 22,
     padding: theme.spacing.lg,
     ...theme.shadow.card,
   },
 });
-

@@ -79,37 +79,35 @@ export const workLogService = {
 
   async createWorkLog(payload: WorkLogPayload) {
     const form = new FormData();
+    const requestDto = {
+      title: payload.title,
+      logText: payload.logText,
+      imageUrls: payload.imageUrls ?? (payload.imageUrl ? [payload.imageUrl] : []),
+      equipmentId: payload.equipmentId,
+      audioFileUrl: payload.audioFileUrl ?? "",
+    };
     form.append(
       "requestDto",
-      JSON.stringify({
-        title: payload.title,
-        logText: payload.logText,
-        imageUrls: payload.imageUrls ?? (payload.imageUrl ? [payload.imageUrl] : []),
-        equipmentId: payload.equipmentId,
-        audioFileUrl: payload.audioFileUrl ?? "",
-      }),
+      new Blob([JSON.stringify(requestDto)], { type: "application/json" }),
     );
-    const response = await springApi.post("/api/work-logs", form, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+    const response = await springApi.post("/api/work-logs", form);
     return toWorkLog(response.data);
   },
 
   async updateWorkLog(logId: number, payload: WorkLogPayload) {
     const form = new FormData();
+    const requestDto = {
+      title: payload.title,
+      logText: payload.logText,
+      imageUrls: payload.imageUrls ?? (payload.imageUrl ? [payload.imageUrl] : []),
+      equipmentId: payload.equipmentId,
+      audioFileUrl: payload.audioFileUrl ?? "",
+    };
     form.append(
       "requestDto",
-      JSON.stringify({
-        title: payload.title,
-        logText: payload.logText,
-        imageUrls: payload.imageUrls ?? (payload.imageUrl ? [payload.imageUrl] : []),
-        equipmentId: payload.equipmentId,
-        audioFileUrl: payload.audioFileUrl ?? "",
-      }),
+      new Blob([JSON.stringify(requestDto)], { type: "application/json" }),
     );
-    const response = await springApi.put(`/api/work-logs/${logId}`, form, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+    const response = await springApi.put(`/api/work-logs/${logId}`, form);
     return toWorkLog(response.data);
   },
 
@@ -152,13 +150,13 @@ export const workLogService = {
     } as never);
     form.append(
       "request",
-      JSON.stringify({
+      new Blob([JSON.stringify({
         title: payload.title,
         logText: payload.logText,
         equipmentId: payload.equipmentId,
         imageUrl: payload.imageUrl ?? "",
         audioFileUrl: payload.audioFileUrl ?? "",
-      }),
+      })], { type: "application/json" }),
     );
     form.append("traceId", `stt-${Date.now()}`);
 
@@ -167,7 +165,6 @@ export const workLogService = {
         url: "/api/work-logs/stt",
         method: "POST",
         data: form,
-        headers: { "Content-Type": "multipart/form-data" },
       },
     ]).then(toWorkLog);
   },

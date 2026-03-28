@@ -28,8 +28,8 @@ export function LiveTranslationScreen() {
   const [source, setSource] = useState<LanguageCode>("vi");
   const [target, setTarget] = useState<LanguageCode>("ko");
   const [audioUri, setAudioUri] = useState<string | undefined>();
-  const [sourceText, setSourceText] = useState("Đội trưởng, tôi có thể làm việc ở khu A-8 phía Dock được không?");
-  const [translatedText, setTranslatedText] = useState("반장님, 도크쪽 A-8구역에서 작업하면 되나요?");
+  const [sourceText, setSourceText] = useState("");
+  const [translatedText, setTranslatedText] = useState("");
   const [loading, setLoading] = useState(false);
   const [recording, setRecording] = useState(false);
   const [pickerTarget, setPickerTarget] = useState<"source" | "target" | null>(null);
@@ -60,8 +60,8 @@ export function LiveTranslationScreen() {
         target,
         traceId: createTraceId("rt"),
       });
-      setSourceText(result.originalText || sourceText);
-      setTranslatedText(result.translatedText || translatedText);
+      setSourceText(result.originalText || "");
+      setTranslatedText(result.translatedText || "");
     } finally {
       setLoading(false);
     }
@@ -137,8 +137,8 @@ export function LiveTranslationScreen() {
           target,
           traceId: createTraceId("rt"),
         });
-        setSourceText(result.originalText || sourceText);
-        setTranslatedText(result.translatedText || translatedText);
+        setSourceText(result.originalText || "");
+        setTranslatedText(result.translatedText || "");
       } catch {
         Alert.alert("녹음 오류", "녹음 또는 번역 요청 중 문제가 발생했습니다.");
       } finally {
@@ -174,8 +174,8 @@ export function LiveTranslationScreen() {
         target,
         traceId: createTraceId("rt"),
       });
-      setSourceText(result.originalText || sourceText);
-      setTranslatedText(result.translatedText || translatedText);
+      setSourceText(result.originalText || "");
+      setTranslatedText(result.translatedText || "");
     } catch {
       Alert.alert("녹음 오류", "녹음 또는 번역 요청 중 문제가 발생했습니다.");
     } finally {
@@ -261,13 +261,13 @@ export function LiveTranslationScreen() {
 
 const styles = StyleSheet.create({
   screenContent: {
-    paddingTop: 14,
-    paddingBottom: 40,
+    paddingTop: 18,
+    paddingBottom: 48,
   },
-  langRow: { flexDirection: "row", alignItems: "center", gap: 10, justifyContent: "center" },
+  langRow: { flexDirection: "row", alignItems: "center", gap: 14, justifyContent: "center", marginTop: 4 },
   pill: {
-    paddingHorizontal: 22,
-    paddingVertical: 14,
+    paddingHorizontal: 26,
+    paddingVertical: 16,
     backgroundColor: "#FFFFFF",
     borderRadius: theme.radius.pill,
     ...theme.shadow.card,
@@ -314,9 +314,9 @@ const styles = StyleSheet.create({
   languageTabTextActive: {
     color: "#FFFFFF",
   },
-  noticeCard: { borderRadius: 20 },
-  notice: { color: theme.colors.subText, lineHeight: 24, fontSize: 15 },
-  label: { color: theme.colors.subText, marginBottom: 10, fontWeight: "700" },
+  noticeCard: { borderRadius: 28, paddingVertical: 28 },
+  notice: { color: theme.colors.subText, lineHeight: 34, fontSize: 18, fontWeight: "500" },
+  label: { color: theme.colors.subText, marginBottom: 10, fontWeight: "800", fontSize: 16 },
   languageHint: {
     position: "absolute",
     top: 16,
@@ -324,15 +324,15 @@ const styles = StyleSheet.create({
     color: theme.colors.accent,
     fontWeight: "800",
   },
-  message: { color: theme.colors.text, fontSize: 20, lineHeight: 30, marginTop: 12 },
-  messageCard: { minHeight: 140, borderRadius: 24 },
-  translateCard: { borderWidth: 1.5, borderColor: theme.colors.accent, minHeight: 150, borderRadius: 24 },
+  message: { color: theme.colors.text, fontSize: 25, lineHeight: 42, marginTop: 20, fontWeight: "500" },
+  messageCard: { minHeight: 170, borderRadius: 30, paddingVertical: 28 },
+  translateCard: { borderWidth: 2, borderColor: theme.colors.accent, minHeight: 170, borderRadius: 30, paddingVertical: 28 },
   actions: { gap: 12 },
-  uploadButton: { backgroundColor: "#EEF2F8", minHeight: 52 },
+  uploadButton: { backgroundColor: "#DDEBFF", minHeight: 60, shadowColor: "transparent", elevation: 0 },
   speakButton: {
-    minHeight: 62,
+    minHeight: 74,
     backgroundColor: theme.colors.accent,
-    borderRadius: 20,
+    borderRadius: 22,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -344,6 +344,6 @@ const styles = StyleSheet.create({
   speakText: {
     color: "#FFFFFF",
     fontWeight: "800",
-    fontSize: 21,
+    fontSize: 22,
   },
 });

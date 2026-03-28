@@ -3,6 +3,7 @@ export const theme = {
     primary: "#278BEA",
     primaryDark: "#1F6FC6",
     accent: "#FF9800",
+    accentDark: "#FF8A00",
     accentSoft: "#FFF1D9",
     success: "#19C15F",
     danger: "#FF4D4F",
@@ -30,12 +31,11 @@ export const theme = {
   },
   shadow: {
     card: {
-      shadowColor: "#2F5A88",
+      shadowColor: "#95ACBF",
       shadowOffset: { width: 0, height: 10 },
-      shadowOpacity: 0.1,
-      shadowRadius: 20,
-      elevation: 3,
+      shadowOpacity: 0.16,
+      shadowRadius: 24,
+      elevation: 6,
     },
   },
 } as const;
-

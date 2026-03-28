@@ -1,12 +1,11 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Screen } from "@/src/components/common/Screen";
 import { AppCard } from "@/src/components/common/AppCard";
 import { theme } from "@/src/theme/theme";
 import { useAuthStore } from "@/src/store/authStore";
-import ProfileManager from "../../../assets/profileManager.svg";
-import LogoutIcon from "../../../assets/logout.svg";
+import { UserAvatar } from "@/src/components/common/UserAvatar";
 
 export function SettingsScreen() {
   const userName = useAuthStore((state) => state.userName);
@@ -19,7 +18,7 @@ export function SettingsScreen() {
       <AppCard style={styles.profileCard}>
         <View style={styles.profileRow}>
           <View style={styles.avatar}>
-            <ProfileManager width={54} height={54} />
+            <UserAvatar size={72} />
           </View>
           <View>
             <Text style={styles.name}>{userName ?? "김철수"}</Text>
@@ -49,10 +48,10 @@ export function SettingsScreen() {
       </AppCard>
 
       <AppCard style={styles.logoutCard}>
-        <View style={styles.logoutRow}>
-          <LogoutIcon width={28} height={28} />
+        <Pressable style={styles.logoutRow} onPress={logout}>
+          <MaterialCommunityIcons name="logout-variant" size={28} color={theme.colors.danger} />
           <Text onPress={logout} style={styles.logout}>로그아웃</Text>
-        </View>
+        </Pressable>
       </AppCard>
 
       <Text style={styles.version}>앱 버전 1.0.0</Text>
@@ -73,7 +72,7 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: 36,
-    backgroundColor: "#ECECEC",
+    overflow: "hidden",
     alignItems: "center",
     justifyContent: "center",
   },

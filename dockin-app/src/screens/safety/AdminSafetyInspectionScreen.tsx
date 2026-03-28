@@ -88,7 +88,6 @@ export function AdminSafetyInspectionScreen() {
           <Text style={styles.monthValue}>{month}</Text>
         </View>
       </AppCard>
-
       {summary.loading ? <LoadingState /> : null}
       {summary.data ? (
         <>
@@ -114,7 +113,6 @@ export function AdminSafetyInspectionScreen() {
               <Text style={styles.tileValue}>{summary.data.unsignedWorkers}명</Text>
             </AppCard>
           </View>
-
           <View style={styles.segmentWrap}>
             <TouchableOpacity style={[styles.segmentButton, viewTab === "all" && styles.segmentActive]} onPress={() => setViewTab("all")}>
               <Text style={[styles.segmentText, viewTab === "all" && styles.segmentTextActive]}>전체현황</Text>
@@ -123,39 +121,41 @@ export function AdminSafetyInspectionScreen() {
               <Text style={[styles.segmentText, viewTab === "unsigned" && styles.segmentTextActive]}>미서명 근로자</Text>
             </TouchableOpacity>
           </View>
+        </>
+      ) : null}
 
-          <AppCard style={styles.workerCard}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>근로자 이수현황</Text>
-              <View style={styles.countPill}><Text style={styles.countPillText}>{shownWorkers.length}명</Text></View>
-            </View>
-            {shownWorkers.map((item) => {
-              const progress = item.totalCount > 0 ? item.completedCount / item.totalCount : 0;
-              return (
-                <View key={item.workerId} style={styles.workerRow}>
-                  <View style={styles.workerAvatar}>
-                    <Text style={styles.workerAvatarText}>{item.workerName.slice(0, 1)}</Text>
+      {summary.data ? (
+        <AppCard style={styles.workerCard}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>근로자 이수현황</Text>
+            <View style={styles.countPill}><Text style={styles.countPillText}>{shownWorkers.length}명</Text></View>
+          </View>
+          {shownWorkers.map((item) => {
+            const progress = item.totalCount > 0 ? item.completedCount / item.totalCount : 0;
+            return (
+              <View key={item.workerId} style={styles.workerRow}>
+                <View style={styles.workerAvatar}>
+                  <Text style={styles.workerAvatarText}>{item.workerName.slice(0, 1)}</Text>
+                </View>
+                <View style={styles.workerContent}>
+                  <View style={styles.workerTop}>
+                    <View>
+                      <Text style={styles.workerName}>{item.workerName}</Text>
+                      <Text style={styles.workerMeta}>{item.teamName}</Text>
+                    </View>
+                    <View style={[styles.statusPill, item.completed ? styles.statusDone : styles.statusPending]}>
+                      <Text style={styles.statusPillText}>{item.completed ? "완료" : "미이수"}</Text>
+                    </View>
                   </View>
-                  <View style={styles.workerContent}>
-                    <View style={styles.workerTop}>
-                      <View>
-                        <Text style={styles.workerName}>{item.workerName}</Text>
-                        <Text style={styles.workerMeta}>{item.teamName}</Text>
-                      </View>
-                      <View style={[styles.statusPill, item.completed ? styles.statusDone : styles.statusPending]}>
-                        <Text style={styles.statusPillText}>{item.completed ? "완료" : "미이수"}</Text>
-                      </View>
-                    </View>
-                    <View style={styles.progressTrack}>
-                      <View style={[styles.progressValue, { width: `${Math.max(progress * 100, 15)}%`, backgroundColor: item.completed ? "#24C25A" : "#F44336" }]} />
-                    </View>
+                  <View style={styles.progressTrack}>
+                    <View style={[styles.progressValue, { width: `${Math.max(progress * 100, 15)}%`, backgroundColor: item.completed ? "#24C25A" : "#F44336" }]} />
                   </View>
                 </View>
-              );
-            })}
-            {!shownWorkers.length ? <EmptyState title="조회할 근로자가 없습니다." /> : null}
-          </AppCard>
-        </>
+              </View>
+            );
+          })}
+          {!shownWorkers.length ? <EmptyState title="조회할 근로자가 없습니다." /> : null}
+        </AppCard>
       ) : null}
 
       <AppCard style={styles.manageCard}>
@@ -191,24 +191,24 @@ export function AdminSafetyInspectionScreen() {
 
 const styles = StyleSheet.create({
   screenContent: {
-    paddingTop: 14,
-    paddingBottom: 42,
+    paddingTop: 18,
+    paddingBottom: 48,
   },
-  monthCard: { gap: 10, borderRadius: 22 },
-  monthLabel: { fontSize: 18, fontWeight: "700", color: theme.colors.text },
-  monthField: { backgroundColor: "#F3F4FA", borderRadius: 14, paddingHorizontal: 16, paddingVertical: 14 },
+  monthCard: { gap: 14, borderRadius: 28, paddingVertical: 26 },
+  monthLabel: { fontSize: 20, fontWeight: "800", color: theme.colors.text },
+  monthField: { backgroundColor: "#F1F2FB", borderRadius: 20, paddingHorizontal: 26, paddingVertical: 18 },
   monthValue: { color: "#8E95A3", fontSize: 18 },
   grid: { flexDirection: "row", flexWrap: "wrap", gap: 12 },
-  tile: { width: "47%", minHeight: 132, borderRadius: 20 },
-  dot: { width: 30, height: 30, borderRadius: 15, marginBottom: 12 },
-  tileLabel: { color: theme.colors.text, fontSize: 16, fontWeight: "600" },
-  tileValue: { fontSize: 24, fontWeight: "900", color: theme.colors.text, marginTop: 16 },
-  segmentWrap: { flexDirection: "row", gap: 10 },
-  segmentButton: { flex: 1, backgroundColor: "#FFFFFF", borderRadius: 12, paddingVertical: 12, alignItems: "center", minHeight: 52 },
+  tile: { width: "47%", minHeight: 132, borderRadius: 22 },
+  dot: { width: 34, height: 34, borderRadius: 17, marginBottom: 12 },
+  tileLabel: { color: theme.colors.text, fontSize: 16, fontWeight: "700" },
+  tileValue: { fontSize: 24, fontWeight: "900", color: theme.colors.text, marginTop: 14 },
+  segmentWrap: { flexDirection: "row", gap: 10, marginBottom: 8 },
+  segmentButton: { flex: 1, backgroundColor: "#FFFFFF", borderRadius: 14, paddingVertical: 14, alignItems: "center", minHeight: 54 },
   segmentActive: { backgroundColor: "#5D5D5D" },
   segmentText: { color: theme.colors.text, fontWeight: "800", fontSize: 16 },
   segmentTextActive: { color: "#FFFFFF" },
-  workerCard: { borderRadius: 22 },
+  workerCard: { borderRadius: 26 },
   sectionHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 },
   sectionTitle: { fontSize: 20, fontWeight: "800", color: theme.colors.text },
   countPill: { backgroundColor: "#ECECEC", paddingHorizontal: 12, paddingVertical: 4, borderRadius: 999 },
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
   statusDone: { backgroundColor: "#24C25A" },
   statusPending: { backgroundColor: "#F44336" },
   statusPillText: { color: "#FFFFFF", fontWeight: "800" },
-  manageCard: { gap: 12, borderRadius: 22 },
+  manageCard: { gap: 12, borderRadius: 26 },
   actionRow: { flexDirection: "row", gap: 10 },
   flexButton: { flex: 1 },
   courseItem: {

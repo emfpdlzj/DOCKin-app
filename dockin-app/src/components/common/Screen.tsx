@@ -1,8 +1,8 @@
 import React from "react";
 import { ScrollView, StyleSheet, View, type ScrollViewProps, type ViewStyle } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { LinearGradient } from "expo-linear-gradient";
 import { theme } from "@/src/theme/theme";
+import { AppShell } from "@/src/components/common/AppShell";
 
 type Props = ScrollViewProps & {
   children: React.ReactNode;
@@ -26,13 +26,7 @@ export function Screen({ children, scrollable = true, contentStyle, useGradient 
 
   return (
     <SafeAreaView style={styles.safe}>
-      {useGradient ? (
-        <LinearGradient colors={["#FFFFFF", "#EDF5FF"]} style={styles.safe}>
-          {body}
-        </LinearGradient>
-      ) : (
-        body
-      )}
+      {useGradient ? <AppShell>{body}</AppShell> : body}
     </SafeAreaView>
   );
 }
@@ -43,7 +37,8 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
   },
   content: {
-    padding: theme.spacing.lg,
+    paddingHorizontal: theme.spacing.lg,
+    paddingTop: theme.spacing.md,
     gap: theme.spacing.md,
     paddingBottom: 32,
   },

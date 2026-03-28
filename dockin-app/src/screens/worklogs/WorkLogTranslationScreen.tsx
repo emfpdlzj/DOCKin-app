@@ -80,14 +80,12 @@ export function WorkLogTranslationScreen({ route }: Props) {
               ))}
             </View>
             <Text style={styles.label}>원문</Text>
-            <TextInput editable={false} multiline style={styles.readonly}>
-              {selected.logText}
-            </TextInput>
-            <AppButton label="번역 실행" onPress={runTranslate} loading={translating} />
+            <TextInput editable={false} multiline style={styles.readonly} value={selected.logText} />
+            <View style={styles.translateButtonWrap}>
+              <AppButton label="번역 실행" onPress={runTranslate} loading={translating} />
+            </View>
             <Text style={styles.label}>번역 결과</Text>
-            <TextInput editable={false} multiline style={styles.readonly}>
-              {translated || "번역 버튼을 눌러주세요."}
-            </TextInput>
+            <TextInput editable={false} multiline style={styles.readonly} value={translated || "번역 버튼을 눌러주세요."} />
           </AppCard>
         </>
       ) : null}
@@ -107,6 +105,9 @@ const styles = StyleSheet.create({
   logOptionActive: { borderWidth: 1.5, borderColor: theme.colors.primary, backgroundColor: "#EEF6FF" },
   languageRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 16 },
   languageButton: { minHeight: 42, paddingHorizontal: 14 },
+  translateButtonWrap: {
+    marginBottom: 22,
+  },
   readonly: {
     minHeight: 120,
     backgroundColor: "#F4F7FA",

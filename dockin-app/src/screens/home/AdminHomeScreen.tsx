@@ -6,28 +6,28 @@ import { Screen } from "@/src/components/common/Screen";
 import { AppCard } from "@/src/components/common/AppCard";
 import { theme } from "@/src/theme/theme";
 import { useAuthStore } from "@/src/store/authStore";
-import DocsIcon from "../../../assets/manager/docs.svg";
-import AlarmIcon from "../../../assets/manager/point.svg";
-import MapIcon from "../../../assets/manager/map.svg";
-import SafeIcon from "../../../assets/manager/safe.svg";
-import MembersIcon from "../../../assets/manager/members.svg";
+import { UserAvatar } from "@/src/components/common/UserAvatar";
 
 export function AdminHomeScreen({ navigation }: BottomTabScreenProps<any>) {
   const userName = useAuthStore((state) => state.userName);
 
   const actions = [
-    { label: "근태관리", icon: DocsIcon, route: "AttendanceManagement" },
-    { label: "긴급사항", icon: AlarmIcon, route: "EmergencyNotice" },
-    { label: "구역관리", icon: MapIcon },
-    { label: "일일점검", icon: SafeIcon },
+    { label: "근태관리", icon: "description", route: "AttendanceManagement" },
+    { label: "긴급사항", icon: "error-outline", route: "EmergencyNotice" },
+    { label: "구역관리", icon: "place" },
+    { label: "일일점검", icon: "verified-user" },
+    { label: "일정관리", icon: "event-note" },
+    { label: "즐겨찾기", icon: "star-outline" },
+    { label: "관심목록", icon: "favorite-border" },
+    { label: "저장자료", icon: "bookmark-border" },
   ];
 
   return (
     <Screen>
       <View style={styles.headerRow}>
-        <View>
+        <View style={styles.nameRow}>
+          <UserAvatar size={42} accent />
           <Text style={styles.name}>관리자 {userName ?? "김철수"}</Text>
-          <Text style={styles.subtitle}>현장 운영과 공지, 근태를 한 번에 관리합니다.</Text>
         </View>
         <View style={styles.headerIcons}>
           <MaterialIcons name="search" size={24} color={theme.colors.text} />
@@ -48,7 +48,9 @@ export function AdminHomeScreen({ navigation }: BottomTabScreenProps<any>) {
               onPress={() => item.route && navigation.navigate(item.route)}
               style={styles.menuCard}
             >
-              <item.icon width={30} height={30} />
+              <View style={styles.menuIcon}>
+                <MaterialIcons name={item.icon as any} size={30} color={item.label === "긴급사항" ? theme.colors.accent : "#54565C"} />
+              </View>
               <Text style={styles.menuLabel}>{item.label}</Text>
             </TouchableOpacity>
           ))}
@@ -68,7 +70,7 @@ export function AdminHomeScreen({ navigation }: BottomTabScreenProps<any>) {
           <View style={styles.memberGrid}>
             {[0, 1, 2, 3].map((item) => (
               <View key={item} style={styles.memberBox}>
-                <MembersIcon width={34} height={34} />
+                <UserAvatar size={34} />
               </View>
             ))}
           </View>
@@ -90,13 +92,18 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
+  nameRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
   headerIcons: {
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
   },
   name: {
-    fontSize: 26,
+    fontSize: 20,
     fontWeight: "800",
     color: theme.colors.text,
   },
@@ -116,12 +123,20 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   menuCard: {
-    width: "47%",
-    backgroundColor: "#F4F5F8",
-    borderRadius: 20,
-    paddingVertical: 18,
+    width: "22%",
+    backgroundColor: "transparent",
+    borderRadius: 18,
+    paddingVertical: 8,
     alignItems: "center",
     gap: 8,
+  },
+  menuIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: 16,
+    backgroundColor: "#F1F3F8",
+    alignItems: "center",
+    justifyContent: "center",
   },
   menuLabel: {
     fontWeight: "700",

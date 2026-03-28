@@ -19,11 +19,11 @@ export function OnboardingScreen({ navigation }: Props) {
         <Text style={styles.subtitle}>
           <Text style={styles.accent}>도크</Text>에서 안전하게, 도크인
         </Text>
-        <Image source={require("../../../assets/dkTitle.png")} style={styles.logo} resizeMode="contain" />
+        <Image source={require("../../../assets/logo.png")} style={styles.logo} resizeMode="contain" />
       </View>
       <View style={styles.footer}>
         <AppButton label="시작하기" onPress={() => navigation.navigate("Login")} style={styles.button} />
-        <Text style={styles.caption}>도크인이 처음인가요?? <Text style={styles.link}>회원가입</Text></Text>
+        <Text style={styles.caption}>도크인이 처음인가요?? <Text onPress={() => navigation.navigate("Signup")} style={styles.link}>회원가입</Text></Text>
       </View>
     </Screen>
   );
@@ -33,18 +33,19 @@ const styles = StyleSheet.create({
   content: {
     flexGrow: 1,
     justifyContent: "space-between",
-    paddingTop: 80,
-    paddingBottom: 80,
+    paddingTop: 36,
+    paddingBottom: 84,
   },
   languageButton: {
     alignSelf: "flex-end",
   },
   hero: {
     alignItems: "center",
-    gap: 20,
+    gap: 18,
+    marginTop: 110,
   },
   subtitle: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: "700",
     color: theme.colors.text,
   },
@@ -52,18 +53,20 @@ const styles = StyleSheet.create({
     color: theme.colors.accent,
   },
   logo: {
-    width: 260,
-    height: 112,
+    width: 280,
+    height: 120,
   },
   footer: {
     gap: 16,
     alignItems: "center",
   },
   button: {
-    width: "88%",
+    width: "82%",
+    borderRadius: 24,
   },
   caption: {
     color: theme.colors.subText,
+    fontSize: 13,
   },
   link: {
     color: theme.colors.accent,

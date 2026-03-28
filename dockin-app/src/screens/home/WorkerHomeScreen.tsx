@@ -10,6 +10,7 @@ import { useAsyncData } from "@/src/hooks/useAsyncData";
 import { attendanceService } from "@/src/services/attendanceService";
 import { theme } from "@/src/theme/theme";
 import { useAuthStore } from "@/src/store/authStore";
+import { UserAvatar } from "@/src/components/common/UserAvatar";
 
 export function WorkerHomeScreen({ navigation }: BottomTabScreenProps<any>) {
   const userName = useAuthStore((state) => state.userName);
@@ -32,12 +33,14 @@ export function WorkerHomeScreen({ navigation }: BottomTabScreenProps<any>) {
   return (
     <Screen>
       <View style={styles.headerRow}>
-        <View>
+        <View style={styles.nameRow}>
+          <UserAvatar size={42} accent />
           <Text style={styles.name}>근로자 {userName ?? "박철수"}</Text>
         </View>
         <View style={styles.headerIcons}>
           <MaterialIcons name="search" size={24} color={theme.colors.text} />
           <MaterialIcons name="public" size={24} color={theme.colors.text} />
+          <MaterialIcons name="mail-outline" size={24} color={theme.colors.text} />
           <TouchableOpacity onPress={() => navigation.navigate("Settings")}>
             <MaterialIcons name="person-outline" size={24} color={theme.colors.text} />
           </TouchableOpacity>
@@ -53,7 +56,13 @@ export function WorkerHomeScreen({ navigation }: BottomTabScreenProps<any>) {
 
       <AppCard style={styles.weatherCard}>
         <Text style={styles.weatherTitle}>울산 미포조선</Text>
-        <Text style={styles.weatherLine}>흐림 · 27°C · 습도 78% · 풍속 6m/s · 강수확률 70%</Text>
+        <View style={styles.weatherStats}>
+          <Text style={styles.weatherLine}>흐림</Text>
+          <Text style={styles.weatherLine}>27 °C</Text>
+          <Text style={styles.weatherLine}>습도 78 %</Text>
+          <Text style={styles.weatherLine}>풍속 6 m/s</Text>
+          <Text style={styles.weatherLine}>강수확률 70 %</Text>
+        </View>
         <Text style={styles.weatherWarn}>젖은 철판 및 발판 위 이동 시 주의하세요.</Text>
       </AppCard>
 
@@ -100,13 +109,18 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
+  nameRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
   headerIcons: {
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
   },
   name: {
-    fontSize: 26,
+    fontSize: 20,
     fontWeight: "800",
     color: theme.colors.text,
   },
@@ -153,6 +167,12 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     fontSize: 22,
     marginBottom: 10,
+  },
+  weatherStats: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 18,
+    marginTop: 8,
   },
   weatherLine: {
     color: "#EAF5FF",

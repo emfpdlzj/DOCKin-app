@@ -40,15 +40,22 @@ export function LoginScreen({ navigation }: Props) {
       <Pressable style={styles.languageButton}>
         <MaterialCommunityIcons name="web" size={28} color={theme.colors.text} />
       </Pressable>
-      <Image source={require("../../../assets/dkTitle.png")} style={styles.logo} resizeMode="contain" />
+      <View style={styles.brandCopy}>
+        <Text style={styles.subtitle}><Text style={styles.accent}>도크</Text>에서 안전하게, 도크인</Text>
+        <Image source={require("../../../assets/logo.png")} style={styles.logo} resizeMode="contain" />
+      </View>
       <View style={styles.form}>
         <Text style={styles.title}>로그인</Text>
         <AppInput label="사원번호(아이디)" value={employeeNumber} onChangeText={setEmployeeNumber} placeholder="사원번호를 입력하세요" autoCapitalize="none" autoCorrect={false} />
         <AppInput label="비밀번호" value={password} onChangeText={setPassword} placeholder="비밀번호를 입력하세요" secureTextEntry autoCapitalize="none" autoCorrect={false} textContentType="password" />
+        <View style={styles.keepLogin}>
+          <View style={styles.checkbox} />
+          <Text style={styles.keepLoginText}>로그인 유지하기</Text>
+        </View>
         {error ? <Text style={styles.error}>{error}</Text> : null}
         <AppButton label="로그인" onPress={handleLogin} loading={loading} />
         <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
-          <Text style={styles.link}>회원가입</Text>
+          <Text style={styles.link}>비밀번호를 잊으셨나요?</Text>
         </TouchableOpacity>
       </View>
     </Screen>
@@ -59,32 +66,63 @@ const styles = StyleSheet.create({
   content: {
     flexGrow: 1,
     justifyContent: "flex-start",
-    gap: 28,
+    gap: 18,
     paddingTop: 32,
   },
   languageButton: {
     alignSelf: "flex-end",
   },
+  brandCopy: {
+    alignItems: "center",
+    gap: 10,
+    marginTop: 20,
+  },
+  subtitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: theme.colors.text,
+  },
+  accent: {
+    color: theme.colors.accent,
+  },
   logo: {
-    width: 220,
-    height: 88,
-    alignSelf: "center",
+    width: 190,
+    height: 76,
   },
   form: {
     gap: 18,
-    marginTop: 24,
+    marginTop: 42,
   },
   title: {
-    fontSize: 42,
+    fontSize: 34,
     fontWeight: "800",
     color: theme.colors.text,
+  },
+  keepLogin: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    marginTop: 6,
+  },
+  checkbox: {
+    width: 24,
+    height: 24,
+    borderRadius: 7,
+    borderWidth: 1.5,
+    borderColor: "#B9BDC5",
+    backgroundColor: "#F5F5F5",
+  },
+  keepLoginText: {
+    color: "#70757E",
+    fontSize: 16,
   },
   error: {
     color: theme.colors.danger,
   },
   link: {
     textAlign: "center",
-    color: theme.colors.accent,
+    color: "#757B84",
     fontWeight: "700",
+    marginTop: 8,
   },
 });

@@ -39,7 +39,12 @@ function buildInspectionGroups(period: "day" | "week" | "month"): {
             items: [
               { id: 4, label: "작업장 정리정돈 상태 확인", status: ChecklistStatus.DONE },
               { id: 5, label: "근무자 안전 장비 생산년도 조사", status: ChecklistStatus.DONE },
-              { id: 6, label: "작업 후 잔류 위험요소 점검", status: ChecklistStatus.TODO },
+              { id: 6, label: "작업 후 잔류 위험요소 점검", status: ChecklistStatus.DONE },
+              { id: 7, label: "화기 작업 구역 소화기 비치 확인", status: ChecklistStatus.DONE },
+              { id: 8, label: "고소 작업 발판 체결 상태 점검", status: ChecklistStatus.DONE },
+              { id: 9, label: "협소 구역 환기 장비 작동 확인", status: ChecklistStatus.TODO },
+              { id: 10, label: "이동 동선 적치물 제거 확인", status: ChecklistStatus.TODO },
+              { id: 11, label: "작업 전 안전표지 부착 상태 점검", status: ChecklistStatus.TODO },
             ],
           },
           {
@@ -48,7 +53,9 @@ function buildInspectionGroups(period: "day" | "week" | "month"): {
             totalCount: 4,
             items: [
               { id: 7, label: "근무일지 서명 확인", status: ChecklistStatus.DONE },
-              { id: 8, label: "작업허가서 갱신", status: ChecklistStatus.TODO },
+              { id: 8, label: "작업허가서 갱신", status: ChecklistStatus.DONE },
+              { id: 12, label: "특수 작업 승인 문서 검토", status: ChecklistStatus.DONE },
+              { id: 13, label: "작업자 안전 서약서 재확인", status: ChecklistStatus.TODO },
             ],
           },
         ]
@@ -62,6 +69,8 @@ function buildInspectionGroups(period: "day" | "week" | "month"): {
                 { id: 9, label: "주간 안전조회 참석", status: ChecklistStatus.DONE },
                 { id: 10, label: "위험예지 훈련", status: ChecklistStatus.DONE },
                 { id: 11, label: "현장 비상대피 리허설", status: ChecklistStatus.TODO },
+                { id: 14, label: "주간 신규 인원 안전교육", status: ChecklistStatus.TODO },
+                { id: 15, label: "사고사례 공유 브리핑", status: ChecklistStatus.TODO },
               ],
             },
             {
@@ -70,7 +79,12 @@ function buildInspectionGroups(period: "day" | "week" | "month"): {
               totalCount: 7,
               items: [
                 { id: 12, label: "용접 장비 누전 점검", status: ChecklistStatus.DONE },
-                { id: 13, label: "발판 안전난간 상태 확인", status: ChecklistStatus.TODO },
+                { id: 13, label: "발판 안전난간 상태 확인", status: ChecklistStatus.DONE },
+                { id: 16, label: "비상 전원 설비 작동 확인", status: ChecklistStatus.DONE },
+                { id: 17, label: "환기 설비 점검 기록 확인", status: ChecklistStatus.DONE },
+                { id: 18, label: "중장비 후방 경고등 작동 점검", status: ChecklistStatus.TODO },
+                { id: 19, label: "가설 통로 미끄럼 방지 상태 확인", status: ChecklistStatus.TODO },
+                { id: 20, label: "임시 배선 정리 상태 확인", status: ChecklistStatus.TODO },
               ],
             },
           ]
@@ -82,7 +96,16 @@ function buildInspectionGroups(period: "day" | "week" | "month"): {
               items: [
                 { id: 14, label: "월간 사고 사례 교육", status: ChecklistStatus.DONE },
                 { id: 15, label: "중량물 이동 경로 점검", status: ChecklistStatus.DONE },
-                { id: 16, label: "화재대피 훈련", status: ChecklistStatus.TODO },
+                { id: 16, label: "화재대피 훈련", status: ChecklistStatus.DONE },
+                { id: 21, label: "산소 절단 장비 월간 점검", status: ChecklistStatus.DONE },
+                { id: 22, label: "고소 작업 보호구 재고 확인", status: ChecklistStatus.DONE },
+                { id: 23, label: "협력사 안전교육 이수 현황 검토", status: ChecklistStatus.DONE },
+                { id: 24, label: "현장 비상 연락망 최신화", status: ChecklistStatus.DONE },
+                { id: 25, label: "정기 소방 훈련 계획 검토", status: ChecklistStatus.TODO },
+                { id: 26, label: "밀폐공간 측정 장비 교정 확인", status: ChecklistStatus.TODO },
+                { id: 27, label: "월간 위험성 평가 회의 준비", status: ChecklistStatus.TODO },
+                { id: 28, label: "안전 표지판 훼손 여부 전수조사", status: ChecklistStatus.TODO },
+                { id: 29, label: "재해 예방 캠페인 자료 배포", status: ChecklistStatus.TODO },
               ],
             },
             {
@@ -91,7 +114,11 @@ function buildInspectionGroups(period: "day" | "week" | "month"): {
               totalCount: 6,
               items: [
                 { id: 17, label: "안전교육 이수 서류 제출", status: ChecklistStatus.DONE },
-                { id: 18, label: "월간 점검 결과 보고", status: ChecklistStatus.TODO },
+                { id: 18, label: "월간 점검 결과 보고", status: ChecklistStatus.DONE },
+                { id: 30, label: "위험물 반입 기록 검토", status: ChecklistStatus.DONE },
+                { id: 31, label: "작업허가서 보관 현황 점검", status: ChecklistStatus.DONE },
+                { id: 32, label: "안전보호구 지급 대장 정리", status: ChecklistStatus.DONE },
+                { id: 33, label: "월간 교육 참석 서명 누락 확인", status: ChecklistStatus.TODO },
               ],
             },
           ];

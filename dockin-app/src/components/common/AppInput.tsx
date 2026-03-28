@@ -26,14 +26,14 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   label: {
-    fontSize: 16,
-    fontWeight: "700",
+    fontSize: 15,
+    fontWeight: "800",
     color: theme.colors.text,
   },
   input: {
-    minHeight: 56,
-    borderRadius: theme.radius.md,
-    backgroundColor: "#F1F3F7",
+    minHeight: 58,
+    borderRadius: 16,
+    backgroundColor: "#F4F4F4",
     paddingHorizontal: 18,
     fontSize: 16,
     color: theme.colors.text,
@@ -43,4 +43,3 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
 });
-

@@ -161,7 +161,7 @@ export function WorkLogEditorScreen({ navigation, route }: Props) {
         </View>
         {error ? <Text style={styles.error}>{error}</Text> : null}
         <View style={styles.submitRow}>
-          <AppButton label="번역 보기" variant="secondary" onPress={() => navigation.navigate("WorkLogTranslation", {})} style={styles.half} />
+          <AppButton label="임시저장" variant="secondary" onPress={() => navigation.navigate("WorkLogTranslation", {})} style={styles.half} />
           <AppButton label="제출하기" onPress={handleSubmit} loading={loading} style={styles.half} />
         </View>
       </AppCard>
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     paddingVertical: 8,
     gap: 12,
-    alignItems: "center",
+    alignItems: "stretch",
   },
   voiceCircle: {
     width: 110,
@@ -259,6 +259,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 18,
     elevation: 6,
+    alignSelf: "center",
   },
   voiceIcon: {
     color: "#FFFFFF",
@@ -268,11 +269,11 @@ const styles = StyleSheet.create({
     color: "#E03131",
     fontWeight: "800",
     fontSize: 18,
+    textAlign: "center",
   },
   textArea: {
-    minHeight: 160,
+    minHeight: 190,
     paddingTop: 18,
-    width: "100%",
   },
   author: {
     color: theme.colors.subText,

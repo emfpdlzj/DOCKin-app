@@ -46,7 +46,7 @@ export function SignupScreen({ navigation }: Props) {
       <Pressable style={styles.languageButton}>
         <MaterialCommunityIcons name="web" size={28} color={theme.colors.text} />
       </Pressable>
-      <Image source={require("../../../assets/dkTitle.png")} style={styles.logo} resizeMode="contain" />
+      <Image source={require("../../../assets/logo.png")} style={styles.logo} resizeMode="contain" />
       <Text style={styles.title}>회원가입</Text>
       <Text style={styles.description}>필요한 정보만 간단히 입력하세요.</Text>
       <AppInput label="사원번호(아이디)" value={employeeNumber} onChangeText={setEmployeeNumber} placeholder="사원번호를 입력하세요" autoCapitalize="none" autoCorrect={false} />
@@ -62,6 +62,9 @@ export function SignupScreen({ navigation }: Props) {
             onPress={() => setRole(item.value)}
             style={[styles.roleButton, role === item.value && styles.roleButtonActive]}
           >
+            <View style={[styles.radio, role === item.value && styles.radioActive]}>
+              <View style={[styles.radioInner, role === item.value && styles.radioInnerActive]} />
+            </View>
             <Text style={[styles.roleLabel, role === item.value && styles.roleLabelActive]}>{item.label}</Text>
           </Pressable>
         ))}
@@ -84,13 +87,13 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   logo: {
-    width: 210,
-    height: 88,
+    width: 190,
+    height: 78,
     alignSelf: "center",
-    marginTop: 20,
+    marginTop: 12,
   },
   title: {
-    fontSize: 38,
+    fontSize: 34,
     fontWeight: "800",
     color: theme.colors.text,
   },
@@ -105,10 +108,13 @@ const styles = StyleSheet.create({
   },
   roleButton: {
     flex: 1,
-    borderRadius: theme.radius.md,
-    backgroundColor: "#F4F5F7",
+    borderRadius: 16,
+    backgroundColor: "#F8F8F8",
     paddingVertical: 18,
     alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    gap: 12,
     borderWidth: 1,
     borderColor: "transparent",
   },
@@ -122,7 +128,28 @@ const styles = StyleSheet.create({
     color: theme.colors.text,
   },
   roleLabelActive: {
-    color: theme.colors.accent,
+    color: theme.colors.text,
+  },
+  radio: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: "#BDBDBD",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  radioActive: {
+    borderColor: theme.colors.accent,
+  },
+  radioInner: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: "transparent",
+  },
+  radioInnerActive: {
+    backgroundColor: theme.colors.accent,
   },
   error: {
     color: theme.colors.danger,

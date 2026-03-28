@@ -8,6 +8,7 @@ import { AppButton } from "@/src/components/common/AppButton";
 import { EmptyState } from "@/src/components/common/EmptyState";
 import { LoadingState } from "@/src/components/common/LoadingState";
 import { StatusBadge } from "@/src/components/common/StatusBadge";
+import { UserAvatar } from "@/src/components/common/UserAvatar";
 import { useAsyncData } from "@/src/hooks/useAsyncData";
 import { chatService } from "@/src/services/chatService";
 import { theme } from "@/src/theme/theme";
@@ -80,10 +81,7 @@ export function ChatRoomListScreen({ navigation }: any) {
   };
 
   return (
-    <Screen>
-      <View style={styles.header}>
-        <Text style={styles.title}>채팅방 목록</Text>
-      </View>
+    <Screen contentStyle={styles.screenContent}>
       <AppCard style={styles.toolbar}>
         <Pressable style={styles.toolbarButton} onPress={() => setSearchOpen((prev) => !prev)}>
           <MaterialIcons name="search" size={24} color={theme.colors.primary} />
@@ -109,7 +107,7 @@ export function ChatRoomListScreen({ navigation }: any) {
           <AppButton label="채팅방 만들기" onPress={handleCreateRoom} loading={submitting} />
         </AppCard>
       ) : null}
-      {error ? <Text style={styles.error}>{error}</Text> : null}
+      {error ? <Text style={styles.error}>채팅 목록을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.</Text> : null}
       {loading ? <LoadingState /> : null}
       {!loading && !filteredRooms.length ? <EmptyState title={searchKeyword ? "검색 결과가 없습니다." : "채팅방이 없습니다."} /> : null}
       {filteredRooms.map((room: ChatRoom) => (
@@ -118,7 +116,7 @@ export function ChatRoomListScreen({ navigation }: any) {
             <Pressable style={styles.roomPressable} onPress={() => navigation.navigate("ChatRoom", { roomId: room.roomId, title: room.title })}>
               <View style={styles.roomHeader}>
                 <View style={styles.roomIdentity}>
-                  <View style={styles.avatar} />
+                  <UserAvatar size={52} accent />
                   <Text style={styles.roomTitle}>{room.title}</Text>
                 </View>
                 <StatusBadge label={room.isOnline ? "접속중" : "오프라인"} tone={room.isOnline ? "green" : "gray"} />
@@ -135,33 +133,28 @@ export function ChatRoomListScreen({ navigation }: any) {
           </View>
         </AppCard>
       ))}
-      <AppCard>
-        <Pressable onPress={() => navigation.navigate("Chatbot")}>
-          <Text style={styles.chatbot}>토크인 챗봇 열기</Text>
-        </Pressable>
-      </AppCard>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  title: { fontSize: 16, fontWeight: "700", color: theme.colors.subText },
+  screenContent: {
+    paddingTop: 16,
+    paddingBottom: 48,
+  },
   toolbar: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   toolbarButton: { flexDirection: "row", alignItems: "center", gap: 8 },
   formCard: { gap: 12 },
   inlineButtons: { flexDirection: "row", gap: 10 },
   inlineButton: { flex: 1 },
-  search: { color: theme.colors.primary, fontWeight: "700", fontSize: 18 },
+  search: { color: theme.colors.primary, fontWeight: "800", fontSize: 18 },
   roomCard: { gap: 10, paddingVertical: 14 },
   roomTopRow: { flexDirection: "row", gap: 10, alignItems: "flex-start" },
   roomPressable: { flex: 1 },
   roomHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   roomIdentity: { flexDirection: "row", alignItems: "center", gap: 12, flex: 1 },
-  avatar: { width: 52, height: 52, borderRadius: 16, backgroundColor: "#C8D6E6" },
   roomTitle: { fontSize: 20, fontWeight: "800", color: theme.colors.text },
   lastMessage: { color: theme.colors.subText, fontSize: 16, backgroundColor: "#E6F0FA", borderRadius: 12, paddingHorizontal: 12, paddingVertical: 10, marginLeft: 64 },
   deleteButton: { paddingTop: 6, paddingHorizontal: 4 },
-  chatbot: { fontSize: 18, fontWeight: "800", color: theme.colors.primary, textAlign: "center" },
-  error: { color: theme.colors.danger },
+  error: { color: theme.colors.danger, fontSize: 14, fontWeight: "500" },
 });

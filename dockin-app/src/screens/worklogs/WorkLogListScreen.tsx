@@ -67,7 +67,7 @@ export function WorkLogListScreen({ navigation }: any) {
   }, []);
 
   return (
-    <Screen>
+    <Screen contentStyle={styles.screenContent}>
       <View style={styles.header}>
         <Text style={styles.title}>같은 구역 근무일지</Text>
         <View style={styles.actions}>
@@ -89,7 +89,7 @@ export function WorkLogListScreen({ navigation }: any) {
         <AppButton label="작업자 작업일지 조회" variant="secondary" onPress={loadByWorker} />
       </View>
 
-      {error ? <Text style={styles.error}>{error}</Text> : null}
+      {error ? <Text style={styles.error}>서버 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.</Text> : null}
       {loading ? <LoadingState /> : null}
       {!loading && !data?.length ? <EmptyState title="등록된 작업일지가 없습니다." /> : null}
       {data?.map((item: WorkLog) => (
@@ -107,14 +107,18 @@ export function WorkLogListScreen({ navigation }: any) {
 }
 
 const styles = StyleSheet.create({
+  screenContent: {
+    paddingTop: 18,
+    paddingBottom: 48,
+  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
   title: {
-    fontSize: 18,
-    fontWeight: "700",
+    fontSize: 20,
+    fontWeight: "800",
     color: theme.colors.text,
   },
   actions: {
@@ -134,10 +138,11 @@ const styles = StyleSheet.create({
   reload: {
     textAlign: "center",
     color: theme.colors.primary,
-    fontWeight: "700",
+    fontWeight: "800",
     marginVertical: 16,
   },
   error: {
     color: theme.colors.danger,
+    fontSize: 14,
   },
 });

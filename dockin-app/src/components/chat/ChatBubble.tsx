@@ -2,16 +2,21 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { theme } from "@/src/theme/theme";
 import type { ChatMessage } from "@/src/types";
+import { UserAvatar } from "@/src/components/common/UserAvatar";
 
 export function ChatBubble({ message }: { message: ChatMessage }) {
   return (
     <View style={[styles.wrap, message.mine ? styles.mineWrap : styles.otherWrap]}>
-      {!message.mine ? <Text style={styles.sender}>{message.senderName}</Text> : null}
-      <View style={[styles.bubble, message.mine ? styles.mine : styles.other]}>
-        <Text style={styles.message}>{message.message}</Text>
-        {message.translatedMessage ? <Text style={styles.translated}>{message.translatedMessage}</Text> : null}
+      {!message.mine ? <UserAvatar size={44} accent /> : null}
+      <View style={styles.content}>
+        {!message.mine ? <Text style={styles.sender}>{message.senderName}</Text> : null}
+        <View style={[styles.bubble, message.mine ? styles.mine : styles.other]}>
+          <Text style={styles.message}>{message.message}</Text>
+          {message.translatedMessage ? <Text style={styles.translated}>{message.translatedMessage}</Text> : null}
+        </View>
+        <Text style={styles.time}>{new Date(message.createdAt).toLocaleTimeString()}</Text>
       </View>
-      <Text style={styles.time}>{new Date(message.createdAt).toLocaleTimeString()}</Text>
+      {message.mine ? <UserAvatar size={44} /> : null}
     </View>
   );
 }
@@ -19,7 +24,10 @@ export function ChatBubble({ message }: { message: ChatMessage }) {
 const styles = StyleSheet.create({
   wrap: {
     marginBottom: 18,
-    maxWidth: "88%",
+    maxWidth: "96%",
+    flexDirection: "row",
+    gap: 10,
+    alignItems: "flex-end",
   },
   mineWrap: {
     alignSelf: "flex-end",
@@ -32,6 +40,9 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     fontWeight: "600",
     fontSize: 13,
+  },
+  content: {
+    maxWidth: "76%",
   },
   bubble: {
     borderRadius: 18,

@@ -31,10 +31,15 @@ export function AppButton({ label, onPress, variant = "primary", disabled, loadi
 
 const styles = StyleSheet.create({
   button: {
-    minHeight: 56,
-    borderRadius: theme.radius.md,
+    minHeight: 58,
+    borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
+    shadowColor: "#D79A2F",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.14,
+    shadowRadius: 12,
+    elevation: 4,
   },
   primary: {
     backgroundColor: theme.colors.accent,
@@ -51,7 +56,6 @@ const styles = StyleSheet.create({
   label: {
     color: "#FFFFFF",
     fontSize: 18,
-    fontWeight: "700",
+    fontWeight: "800",
   },
 });
-
